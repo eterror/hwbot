@@ -1,0 +1,4 @@
+hwbot
+=====
+
+Hedgewars lobby commander
