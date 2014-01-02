@@ -79,7 +79,7 @@ begin
 end;  
   
     
-function uAddFlag(name: String; flag: string): boolean;
+function uAddFlag(name: String; flag: string):boolean;
 var
     i:	Integer;
     
@@ -95,7 +95,7 @@ begin
 end;
 
 
-function uAddUser(name: String; flag: String): boolean;
+function uAddUser(name: String; flag: String):boolean;
 var
     i:	Integer;
     
@@ -113,7 +113,7 @@ begin
 end;
 
 
-function uDelUser(name: String): boolean;
+function uDelUser(name: String):boolean;
 var
     i:	Integer;
     
@@ -158,14 +158,23 @@ var
     
 begin
 // DEFAULT SERVER COMMANDS
+    if (input = 'BYE') then
+    begin
+	// reconnect ?
+	exit;
+    end;
+    
+    
     if (input = 'ERROR') then
     begin
+	// reconnect ?
 	exit;
     end;
     
     
     if (input = 'NOTICE') then
     begin
+	// reconnect ?
 	exit;
     end;
     
