@@ -65,11 +65,11 @@ var
     
 begin
     for i:=0 to (high(user)+1) do
-     if (user[i].nickname = name) then 
-     begin
-        user[i].mode:=flag;
-        exit(TRUE);
-     end; 
+	if (user[i].nickname = name) then 
+        begin
+    	    user[i].mode:=flag;
+    	    exit(TRUE);
+        end; 
      
     exit(FALSE);
 end;
@@ -81,15 +81,15 @@ var
     
 begin
     for i:=0 to high(user)+1 do
-     if (user[i].nickname = '') then 
-     begin
-        user[i].upname:=AnsiUpperCase(name);
-        user[i].mode:=flag;
-        user[i].nickname:=name;
-        exit(TRUE);
-     end;
+	if (user[i].nickname = '') then 
+	begin
+    	    user[i].upname:=AnsiUpperCase(name);
+	    user[i].mode:=flag;
+    	    user[i].nickname:=name;
+    	    exit(TRUE);
+        end;
      
-    uAddUser:=FALSE;
+    exit(FALSE);
 end;
 
 
@@ -99,15 +99,15 @@ var
     
 begin
     for i:=0 to high(user) do
-     if (user[i].upname = AnsiUpperCase(name)) then 
-     begin
-        user[i].nickname:='';
-        user[i].upname:='';
-        user[i].mode:='';
-        exit(TRUE);
-     end;
+	if (user[i].upname = AnsiUpperCase(name)) then 
+	begin
+    	    user[i].nickname:='';
+	    user[i].upname:='';
+    	    user[i].mode:='';
+    	    exit(TRUE);
+        end;
     
-    uDelUser:=FALSE;
+    exit(FALSE);
 end;
 
     
