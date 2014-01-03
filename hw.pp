@@ -824,7 +824,7 @@ begin
     writeln(sOut, HW_NICK,#10);
     
     // SKIP FIRST DATA
-    for i:=1 to 11 do 
+    for i:=1 to 12 do 
     begin
 	readln(sin, buf);
 	{$IFDEF DEBUG}writeln('[DEBUG]',buf,'[!]');{$ENDIF}
