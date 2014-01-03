@@ -150,14 +150,14 @@ begin
     
     if (input = 'ERROR') then
     begin
-	hwReconnect();
+	// hwReconnect();
 	exit;
     end;
     
     
     if (input = 'NOTICE') then
     begin
-	hwReconnect(); {?}
+	// hwReconnect(); {?}
 	exit;
     end;
     
