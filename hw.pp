@@ -11,7 +11,6 @@
 TODO:
  - better support for NOTICE and ERROR
  - better support for USER FLAGS (plugin command: onFlagChange)
- - add support for registered nickname (hw.conf:password)
  - sometimes bot use 100% of cpu (?)
 }
 
@@ -30,7 +29,7 @@ uses
     hwTypes;
  
 var 
-    user: 	array of hwTypes.TUser; 
+    user:	array of hwTypes.TUser; 
     plugin:	array of hwTypes.TPlugin;
     pc:		Byte;
     
@@ -81,7 +80,7 @@ var
     i:	Integer;
     
 begin
-    for i:=0 to high(user)+1 do
+    for i:=0 to high(user) do
 	if (user[i].nickname = '') then 
 	begin
     	    user[i].upname:=AnsiUpperCase(name);
@@ -217,11 +216,7 @@ begin
     
 	if (s1 = HW_NICK) then
 	begin
-	    writeln('[#] Reconnecting (15s)...');
-	    hwDisconnect();
-	    sleep(15000);
-	    hwConnect();
-	    hwRegister();
+	    hwReconnect();
 	    exit;
 	end;
     end;
@@ -287,7 +282,7 @@ begin
     
 	if (s1 = '-i') then 
 	begin
-	    {onBackLobby}
+	    {plugin:onBackLobby}
 	end;
     end;
     
@@ -684,8 +679,7 @@ begin
     try
 	plugin[id].hnd:=LoadLibrary(name);
     except
-	hwReloadPlugin:=1;
-	exit;
+	exit(1);
     end;
     
     Pointer(plugin[id].parse):=GetProcedureAddress(plugin[id].hnd, 'PluginParse');
@@ -724,16 +718,14 @@ begin
 	begin
 	    pc-=1;
 	    writeln('FAILED');
-	    hwLoadPlugin:=3;
-	    exit;
+	    exit(3);
 	end;
     
     if (not FileExists(name)) then
     begin
 	pc-=1;
 	writeln('FAILED');
-	hwLoadPlugin:=2;
-	exit;
+	exit(2);
     end;
     
     try
@@ -746,9 +738,8 @@ begin
     begin
 	writeln('FAILED') ;
 	plugin[pc].cmd:='';
-	hwLoadPlugin:=1;
 	pc-=1;
-	exit;
+	exit(1);
     end else
 	writeln('OK ');
     
@@ -776,9 +767,8 @@ begin
 	(Pointer(plugin[pc].gname) = nil) then
     begin
 	writeln('[!] Not defined all functions in plugin. Case sensivity may cause this errors.');
-	hwLoadPlugin:=4;
 	pc-=1;
-	exit;
+	exit(4);
     end;
 	
     plugin[pc].cmd:=plugin[pc].gcmd();
@@ -797,14 +787,17 @@ end;
 
 function hwUnloadPlugin(id: Integer):boolean;
 begin
-    writeln('[*] Removing plugin -> ',id);
+    write('[*] Removing plugin -> ',id,': ');
     try
 	plugin[i].name:='';
 	plugin[i].fname:='';
 	plugin[i].cmd:='';
 	UnloadLibrary(plugin[i].hnd);
+	writeln('OK');
+	exit(TRUE);
     except
-	exit;
+	writeln('FAIL');
+	exit(FALSE);
     end;
 end;
 
@@ -1024,8 +1017,7 @@ begin
     close(f);
 end;
  
-
-// main 
+ 
 begin
     writeln('[@] InfoBOT for Hedgewars by Solaris (solargrim@gmail.com) ver. ',VERSION);
     
