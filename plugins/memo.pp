@@ -210,7 +210,7 @@ begin
 end;
 
 
-function showMemo(src: String):String;
+function showMemo(src: String):AnsiString;
 var
     i, j:	 	Integer;
     rchar:      	Char;
