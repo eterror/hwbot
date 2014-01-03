@@ -150,7 +150,12 @@ begin
     
     if (input = 'ERROR') then
     begin
-	// hwReconnect();
+	readln(sin, s1);
+	writeln('[!] Error: ',s1);
+	
+	if (pos('Incorrect',s1) = 0) then
+	    hwReconnect();
+	
 	exit;
     end;
     
@@ -826,7 +831,7 @@ begin
 	
 	if (buf = 'ASKPASSWORD') and (HW_PASSWORD <> '') then
 	begin
-	    writeln('[*] Sending nickname password (',HW_PASSWORD,')');
+	    writeln('[*] Sending password (',HW_PASSWORD,')');
 	    writeln(sout, 'PASSWORD');
 	    writeln(sout, HW_PASSWORD,#10);
 	end;
@@ -905,7 +910,7 @@ begin
     writeln(sout, 'QUIT');
     writeln(sout, 'I will be back!',#10);
     close(sOut);
-    hwDisconnect:=TRUE;
+    exit(TRUE);
 end;
 
 
