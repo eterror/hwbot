@@ -274,7 +274,7 @@ begin
 end;
 
 
-function PluginParse(const s: String; const u: array of TUser):String; cdecl; export;
+function PluginParse(const s: String; const u: array of TUser; botnick: String):String; cdecl; export;
 var
     nick:	String;
     param:	String;
@@ -373,7 +373,7 @@ begin
     end;
     
     // HW_NICK
-    if ExtractWord(1, param, [#32]) = 'Service' then
+    if ExtractWord(1, param, [#32]) = (botnick) then
     begin
 	PluginParse:=nick+': No way!';
 	exit;

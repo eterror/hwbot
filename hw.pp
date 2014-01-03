@@ -627,7 +627,7 @@ begin
 		if (copy(s2, 1, pos(#32, s2)-1) = plugin[k].cmd) or (plugin[k].cmd = s2) then
 		begin
 		    try 
-			writeln(sout, 'CHAT'+#10+plugin[k].Parse(s1+':'+s2, user), #10);
+			writeln(sout, 'CHAT'+#10+plugin[k].Parse(s1+':'+s2, user, HW_NICK), #10);
 		    except
 			{$IFDEF DEBUG}writeln('[*] Commands for plugins.'); {$ENDIF}
 			continue;

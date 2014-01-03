@@ -58,7 +58,7 @@ type
         help:           AnsiString;
 
         type
-            TParse =            function (const s: String; const u: array of TUser):String; cdecl;
+            TParse =            function (const s: String; const u: array of TUser; botnick: String):String; cdecl;
             TOnJoinLobby =      function (const s: String):String; cdecl;
             TOnJoinRoom =       function (const s: String):String; cdecl;
             TOnQuit =           function (const s: String):String; cdecl;
