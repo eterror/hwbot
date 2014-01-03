@@ -385,6 +385,7 @@ begin
 	exit;
     end;
     
+    // HW_NICK
     if ExtractWord(1, param, [#32]) = 'INFOBOT' then
     begin
 	PluginParse:=nick+': No way!';
