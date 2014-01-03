@@ -79,9 +79,6 @@ begin
     
     s1:=ExtractWord(1, param, [':']);
 
-    if (nick = s1) then
-	exit;
-	
     if not(isOnline(s1)) then
     begin
         PluginParse:=nick+': '+param+' is offline';
@@ -93,15 +90,16 @@ begin
     
     readln(bin);
     readln(bin);
-    readln(bin);
+//    readln(bin);
     
     readln(bin, s2);
     readln(bin, s3);
-    readln(bin, s4);
+    readln(bin, s4);readln(bin);
 
     PluginParse:='';
-    writeln(bout,'CHAT',#10,nick+': '+param+'('+GetCountry(s2)+'):'+#32+s3+#32+s4,#10);                        
+    writeln(bout,'CHAT',#10,nick+': '+param+'('+GetCountry(s2)+'):'+#32+s3+#32+s4+#10);                        
 end;   
+ 
  
 procedure PluginInit(var sin, sout: Text); cdecl; export;
 begin

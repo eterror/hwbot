@@ -583,11 +583,6 @@ begin
 	    for k:=1 to (pc) do
 		if (copy(s2, 1, pos(#32, s2)-1) = plugin[k].cmd) or (plugin[k].cmd = s2) then
 		begin
-		    try
-			plugin[k].gInit(sin, sout);
-		    except
-		    end;
-		    
 		    try 
 			output:=plugin[k].Parse(s1+':'+s2, user, HW_NICK);
 			
