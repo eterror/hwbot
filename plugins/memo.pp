@@ -12,7 +12,7 @@ const
     plugin_command ='.memo';
     plugin_help = 'Memo is a lite message system.';
     plugin_author = 'solaris';
-    plugin_version = '1.0';
+    plugin_version = '1.1';
     plugin_usage = '[username/command:mark|del|unmark] [message]';
     
     INBOX_SIZE	= 5;
@@ -51,10 +51,7 @@ begin
     {$I-}rewrite(f, 1);{$I+}
 
     if (IOREsult <> 0) then
-        begin
-            saveDB:=FALSE;
-            exit;
-        end;
+        exit(FALSE);
 
     blockwrite(f, memo, sizeof(memo));
     close(f);
@@ -72,11 +69,7 @@ begin
     {$I-}reset(f, 1); {$I+}
 
     if (IOREsult <> 0) then
-    begin
-	//saveDB();
-	loadDB:=FALSE;
-        exit;
-    end;
+	exit(FALSE);
 
     blockread(f, memo, sizeof(memo));
     close(f);
@@ -94,15 +87,9 @@ begin
 
     for i:=1 to high(memo) do
         if (memo[i].nickname = src) then
-            begin
-                for j:=1 to INBOX_SIZE do
-                    if (memo[i].messages[j].state = M_UNREAD) then
-                    begin
-                        isnewMemo:=TRUE;
-                        //break;
-                        exit;
-                    end;
-            end;
+            for j:=1 to INBOX_SIZE do
+                if (memo[i].messages[j].state = M_UNREAD) then
+            	    exit(TRUE);
 end;
 
 
@@ -253,9 +240,9 @@ begin
             begin
         	ShowMemo:='';
             end else
-            begin
-                out+=#10;            
-    		ShowMemo:=out;
+            begin 
+                delete(out, length(out)-5, length(out));
+    		ShowMemo:=out+#10;
             end;
 
             exit;
@@ -386,7 +373,7 @@ begin
     end;
     
     // HW_NICK
-    if ExtractWord(1, param, [#32]) = 'INFOBOT' then
+    if ExtractWord(1, param, [#32]) = 'Service' then
     begin
 	PluginParse:=nick+': No way!';
 	exit;
