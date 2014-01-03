@@ -646,17 +646,21 @@ begin
 	exit(1);
     end;
     
-    Pointer(plugin[id].parse):=GetProcedureAddress(plugin[id].hnd, 'PluginParse');
-    Pointer(plugin[id].onquit):=GetProcedureAddress(plugin[id].hnd, 'OnQuit');
-    Pointer(plugin[id].onjoinlobby):=GetProcedureAddress(plugin[id].hnd, 'OnJoinLobby');
-    Pointer(plugin[id].onjoinroom):=GetProcedureAddress(plugin[id].hnd, 'OnJoinRoom');
-    Pointer(plugin[id].gcmd):=GetProcedureAddress(plugin[id].hnd, 'GetPluginCommand');
-    Pointer(plugin[id].gver):=GetProcedureAddress(plugin[id].hnd, 'GetPluginVersion');
-    Pointer(plugin[id].gauthor):=GetProcedureAddress(plugin[id].hnd, 'GetPluginAuthor');
-    Pointer(plugin[id].gname):=GetProcedureAddress(plugin[id].hnd, 'GetPluginName');
-    Pointer(plugin[id].ghelp):=GetProcedureAddress(plugin[id].hnd, 'GetPluginHelp');
-    Pointer(plugin[id].gusage):=GetProcedureAddress(plugin[id].hnd, 'GetPluginUsage');
-    Pointer(plugin[id].ginit):=GetProcedureAddress(plugin[id].hnd, 'PluginInit');
+    try
+	Pointer(plugin[id].parse):=GetProcedureAddress(plugin[id].hnd, 'PluginParse');
+	Pointer(plugin[id].onquit):=GetProcedureAddress(plugin[id].hnd, 'OnQuit');
+	Pointer(plugin[id].onjoinlobby):=GetProcedureAddress(plugin[id].hnd, 'OnJoinLobby');
+	Pointer(plugin[id].onjoinroom):=GetProcedureAddress(plugin[id].hnd, 'OnJoinRoom');
+	Pointer(plugin[id].gcmd):=GetProcedureAddress(plugin[id].hnd, 'GetPluginCommand');
+	Pointer(plugin[id].gver):=GetProcedureAddress(plugin[id].hnd, 'GetPluginVersion');
+	Pointer(plugin[id].gauthor):=GetProcedureAddress(plugin[id].hnd, 'GetPluginAuthor');
+	Pointer(plugin[id].gname):=GetProcedureAddress(plugin[id].hnd, 'GetPluginName');
+	Pointer(plugin[id].ghelp):=GetProcedureAddress(plugin[id].hnd, 'GetPluginHelp');
+	Pointer(plugin[id].gusage):=GetProcedureAddress(plugin[id].hnd, 'GetPluginUsage');
+	Pointer(plugin[id].ginit):=GetProcedureAddress(plugin[id].hnd, 'PluginInit');
+    except
+	exit(1);
+    end;
     
     plugin[id].cmd:=plugin[id].gcmd();
     plugin[id].ver:=plugin[id].gver();
@@ -665,7 +669,7 @@ begin
     plugin[id].usage:=plugin[id].gusage();
     plugin[id].help:=plugin[id].ghelp();
     plugin[id].fname:=name;
-    plugin[id].gInit(sin, sout);
+    plugin[id].gInit(hwTypes.sin, hwTypes.sout);
     
     hwReloadPlugin:=0;
 end;
@@ -770,7 +774,8 @@ function hwUnloadPlugin(id: Integer):boolean;
 begin
     write('[*] Removing plugin -> ',id,': ');
     try
-	UnloadLibrary(plugin[i].hnd);
+	//UnloadLibrary(plugin[i].hnd);
+	FreeLibrary(plugin[i].hnd);
 	plugin[i].Free;
 	writeln('OK');
 	exit(TRUE)

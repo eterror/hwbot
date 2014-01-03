@@ -105,6 +105,7 @@ end;
                 
 
 exports
+    PluginInit,
     OnJoinRoom,
     OnJoinLobby,
     OnQuit,
