@@ -610,8 +610,10 @@ begin
 		    exit;
 		end;
 		
-		writeln(sout, 'CHAT',#10,s1,': Plugin removed.',#10);
-		hwUnloadPlugin(k);
+		if (hwUnloadPlugin(k)) then
+		    writeln(sout, 'CHAT',#10,s1,': Plugin removed.',#10)
+		else
+		    writeln(sout, 'CHAT',#10,s1,': Error while removing plugin.',#10);
 	    end;
 	end;
 	
@@ -789,15 +791,15 @@ function hwUnloadPlugin(id: Integer):boolean;
 begin
     write('[*] Removing plugin -> ',id,': ');
     try
+	UnloadLibrary(plugin[i].hnd);
 	plugin[i].name:='';
 	plugin[i].fname:='';
 	plugin[i].cmd:='';
-	UnloadLibrary(plugin[i].hnd);
 	writeln('OK');
-	exit(TRUE);
+	exit(TRUE)
     except
 	writeln('FAIL');
-	exit(FALSE);
+	exit(FALSE)
     end;
 end;
 
