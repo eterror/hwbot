@@ -465,10 +465,7 @@ begin
 	    s3:=ExtractWord(2, s2, [#32]);
 	    
 	    if (s3 = HW_ADMIN) then
-	    begin
-		writeln(sout, 'CHAT',#10,s1,': No way sir!',#10);
 		exit;
-	    end;
 	    
 	    writeln('[*] Kicking user from room: ',s3);
 	    writeln(sout, 'KICK',#10,s3,#10);
