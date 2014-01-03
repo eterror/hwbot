@@ -45,7 +45,7 @@ function hwUnloadPlugin(id: Integer):Boolean;forward;
 function hwReloadPlugin(id: byte; name:string):byte;forward;
 function hwLoadConfig():Boolean;forward;
 procedure hwInitPLugins(); forward;
-
+procedure Main();forward;
 
 function uAddFlag(name: String; flag: string):boolean;
 var
@@ -1005,8 +1005,27 @@ begin
     
     close(f);
 end;
- 
- 
+
+
+procedure RegisterSignal();
+var
+    oa, na:	PSigActionRec;
+    
+begin
+    new(oa);
+    new(na);
+    na^.sa_Handler:=SigActionHandler(@Main);
+    fillchar(na^.Sa_Mask,sizeof(na^.sa_mask),#0);
+    na^.Sa_Flags:=0;
+    {$IFDEF LINUX}na^.Sa_Restorer:=Nil;{$ENDIF}
+    if fpSigAction(SigHup,na,oa) <> 0 then
+	exit;
+    dispose(oa);
+    dispose(na);
+end;
+
+
+procedure Main();
 begin
     writeln('[@] InfoBOT for Hedgewars by Solaris (solargrim@gmail.com) ver. ',VERSION);
     
@@ -1018,7 +1037,9 @@ begin
     pc:=0;
     GetDir(0, HW_PLUGINS);
     HW_PLUGINS+='/plugins/';
-
+    
+    RegisterSignal();
+     
     hwLoadConfig();
     hwinfo();
     hwConnect();
@@ -1026,4 +1047,9 @@ begin
     hwInitPlugins();
     hwLoop();
     hwDisconnect();
+end;
+
+ 
+begin
+    Main();
 end.
