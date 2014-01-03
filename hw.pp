@@ -803,6 +803,13 @@ begin
     writeln(sOut, 'PROTO');
     writeln(sOut, HW_PROTO,#10);
     
+    if (HW_PASSWORD <> '') then
+    begin
+	writeln('[*] Sending nickname password');
+	writeln(sout, 'PASSWORD');
+	writeln(sout, HW_PASSWORD,#10);
+    end;
+    
     writeln('[#] Downloading users');
     
     // SKIP FIRST DATA
@@ -830,7 +837,13 @@ begin
 	    readln(sin, buf);
 	    
 	    writeln('[!] Connection error: ',buf);
-	    sleep(100);
+	    
+	    if (buf = 'Authentication failed') then
+	    begin
+		writeln('[!] Bad password for nickname');
+		quit:=TRUE;
+		exit;
+	    end;
 	    
 	    writeln('[*] Reconnecting (15s)');
 	    hwDisconnect();
