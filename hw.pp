@@ -47,19 +47,6 @@ function hwLoadConfig():Boolean;forward;
 procedure hwInitPLugins(); forward;
 
 
-function isOnline(who: String):boolean;
-var
-    i:	Integer;
-    
-begin
-    for i:=0 to high(user) do
-	if (user[i].nickname = who) then
-	    exit(TRUE);
-	
-    exit(FALSE);
-end;  
-  
-    
 function uAddFlag(name: String; flag: string):boolean;
 var
     i:	Integer;
