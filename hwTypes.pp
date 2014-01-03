@@ -42,7 +42,7 @@ const
     HW_PORT     = 46631;
     HW_PROTO    = 47;
     HW_CONFIG   = 'hw.conf';
-    VERSION     = '0.2rc9';
+    VERSION     = '0.3rc1';
     HW_ADMIN    = 'terror';
 
 

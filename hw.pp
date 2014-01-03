@@ -34,7 +34,8 @@ var
     plugin:	array of hwTypes.TPlugin;
     pc:		Byte;
     
-    
+
+function hwReconnect():boolean;forward;
 function hwDisconnect():boolean;forward;
 function hwConnect():boolean;forward;
 function hwLoop():boolean;forward;
@@ -140,21 +141,23 @@ begin
 // DEFAULT SERVER COMMANDS
     if (input = 'BYE') then
     begin
-	// reconnect ?
+	readln(sin, s1);
+	writeln('[!] Register error: ',s1);
+	quit:=TRUE;
 	exit;
     end;
     
     
     if (input = 'ERROR') then
     begin
-	// reconnect ?
+	hwReconnect();
 	exit;
     end;
     
     
     if (input = 'NOTICE') then
     begin
-	// reconnect ?
+	hwReconnect(); {?}
 	exit;
     end;
     
@@ -634,6 +637,17 @@ begin
 end;
 
 
+function hwReconnect():boolean;
+begin
+    writeln('[#] Reconnecting (15s)...');
+    hwDisconnect();
+    sleep(15000);
+    hwConnect();
+    hwRegister();
+    exit(TRUE);
+end;
+
+
 function hwConnect():boolean;
 begin
     writeln('[#] Estabilising connection to HW server');
@@ -798,25 +812,24 @@ var
 begin
     writeln('[#] Registering user');
         
-    writeln(sOut, 'NICK');
-    writeln(sOut, HW_NICK,#10);
+        
     writeln(sOut, 'PROTO');
     writeln(sOut, HW_PROTO,#10);
-    
-    if (HW_PASSWORD <> '') then
-    begin
-	writeln('[*] Sending nickname password');
-	writeln(sout, 'PASSWORD');
-	writeln(sout, HW_PASSWORD,#10);
-    end;
-    
-    writeln('[#] Downloading users');
+    writeln(sOut, 'NICK');
+    writeln(sOut, HW_NICK,#10);
     
     // SKIP FIRST DATA
     for i:=1 to 11 do 
     begin
 	readln(sin, buf);
 	{$IFDEF DEBUG}writeln('[DEBUG]',buf,'[!]');{$ENDIF}
+	
+	if (buf = 'ASKPASSWORD') and (HW_PASSWORD <> '') then
+	begin
+	    writeln('[*] Sending nickname password (',HW_PASSWORD,')');
+	    writeln(sout, 'PASSWORD');
+	    writeln(sout, HW_PASSWORD,#10);
+	end;
 	
 	if (buf = 'NOTICE') then
 	begin
@@ -825,11 +838,7 @@ begin
 	    
 	    HW_NICK+=IntToStr(random(10));
 	    
-	    writeln('[*] Reconnecting (15s)');
-	    hwDisconnect();
-	    sleep(15000);
-	    hwConnect();
-	    hwRegister();
+	    hwReconnect();
 	end;
 	
 	if (buf = 'ERROR') or (buf = 'BYE') then
@@ -840,16 +849,11 @@ begin
 	    
 	    if (buf = 'Authentication failed') then
 	    begin
-		writeln('[!] Bad password for nickname');
 		quit:=TRUE;
 		exit;
 	    end;
 	    
-	    writeln('[*] Reconnecting (15s)');
-	    hwDisconnect();
-	    sleep(15000);
-	    hwConnect();
-	    hwRegister();
+	    hwReconnect();
 	end;
     end;
         
