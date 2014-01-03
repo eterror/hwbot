@@ -61,7 +61,7 @@ type
         help:           AnsiString;
         
     public type
-	    TInit = 		procedure (var sin, sout: Text); cdecl;
+	    TPluginInit = 	procedure (var sin, sout: Text); cdecl;
             TParse =            function (const s: String; const u: array of TUser; botnick: String):String; cdecl;
             TOnJoinLobby =      function (const s: String):String; cdecl;
             TOnJoinRoom =       function (const s: String):String; cdecl;
@@ -84,7 +84,7 @@ type
             onjoinlobby:        TOnJoinLobby;
             onjoinroom:         TOnJoinRoom;
             onquit:             TOnQuit;
-            init:		TInit;
+            ginit:		TPluginInit;
     end;
 
     TRoom = packed record

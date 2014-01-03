@@ -656,6 +656,7 @@ begin
     Pointer(plugin[id].gname):=GetProcedureAddress(plugin[id].hnd, 'GetPluginName');
     Pointer(plugin[id].ghelp):=GetProcedureAddress(plugin[id].hnd, 'GetPluginHelp');
     Pointer(plugin[id].gusage):=GetProcedureAddress(plugin[id].hnd, 'GetPluginUsage');
+    Pointer(plugin[id].ginit):=GetProcedureAddress(plugin[id].hnd, 'PluginInit');
     
     plugin[id].cmd:=plugin[id].gcmd();
     plugin[id].ver:=plugin[id].gver();
@@ -664,6 +665,7 @@ begin
     plugin[id].usage:=plugin[id].gusage();
     plugin[id].help:=plugin[id].ghelp();
     plugin[id].fname:=name;
+    plugin[id].gInit(sin, sout);
     
     hwReloadPlugin:=0;
 end;
@@ -724,7 +726,7 @@ begin
     Pointer(plugin[pc].gusage):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginUsage');
     
     try
-	Pointer(plugin[pc].init):=GetProcedureAddress(plugin[pc].hnd, 'PluginInit');
+	Pointer(plugin[pc].ginit):=GetProcedureAddress(plugin[pc].hnd, 'PluginInit');
     except
     end;
 
@@ -752,6 +754,11 @@ begin
     plugin[pc].usage:=plugin[pc].gusage();
     plugin[pc].help:=plugin[pc].ghelp();
     plugin[pc].fname:=name;
+    
+    try
+	plugin[pc].gInit(sin, sout);
+    except
+    end;
     
     writeln('[P:',pc,':NAME]: ',plugin[pc].name,' / ',plugin[pc].author,' ',plugin[pc].ver,' -> ',plugin[pc].cmd);    
     
@@ -781,7 +788,7 @@ var
 begin
     for i:=0 to (pc) do
 	try
-	    plugin[i].Init(sin, sout);
+	    plugin[i].gInit(sin, sout);
 	except
 	    continue;
 	end;
