@@ -18,6 +18,9 @@ const
     plugin_author = 'Template';
     plugin_version = '1.0';
     plugin_usage = '[username]';
+    
+var
+    bin, bout:	Text;
 
 
 function OnJoinRoom(const s: String):String; cdecl; export;
@@ -26,13 +29,13 @@ begin
 end;
 
 
-function onJoinLobby(const s: String):String; cdecl; export;
+function OnJoinLobby(const s: String):String; cdecl; export;
 begin	
     onJoinLobby:='';
 end;
 
 
-function onQuit(const s: String):String; cdecl; export;
+function OnQuit(const s: String):String; cdecl; export;
 begin
     onQuit:='';
 end;
@@ -42,6 +45,13 @@ function PluginParse(const s: String; const u: array of TUser):String; cdecl; ex
 begin
     PluginParse:='';
 end;   
+
+
+procedure PluginInit(var sin, sout: Text); cdecl; export;
+begin
+    bin:=sin;
+    bout:=sout;
+end;
  
 
 function GetPluginCommand:String; cdecl; export;
@@ -79,6 +89,7 @@ end;
                 
 
 exports
+    PluginInit,
     OnJoinLobby,
     OnJoinRoom,
     OnQuit,
