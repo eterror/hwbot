@@ -64,7 +64,11 @@ begin
     nick:=ExtractWord(1, s, [':']);
     PluginParse:=nick+': current bot uptime: '+IntToStr(days)+' days '+IntToStr(hours)+' hours '+IntToStr(minutes)+' minutes.';
 end;   
- 
+
+
+procedure PluginInit(var sin, sout: Text); cdecl; export;
+begin
+end; 
 
 function GetPluginCommand:String; cdecl; export;
 begin

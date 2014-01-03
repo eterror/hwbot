@@ -220,6 +220,10 @@ begin
 	PluginParse:=nick+': Last seen '+buf+' ago';
 end;   
  
+ 
+procedure PLuginInit(var sin, sout: Text); cdecl; export;
+begin
+end;
 
 function GetPluginCommand:String; cdecl; export;
 begin
@@ -256,6 +260,7 @@ end;
                 
 
 exports
+    PluginInit,
     OnJoinLobby,
     OnJoinRoom,
     OnQuit,

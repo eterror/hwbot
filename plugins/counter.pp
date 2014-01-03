@@ -98,7 +98,11 @@ begin
     nick:=ExtractWord(1, s, [':']);
     PluginParse:=nick+': total visitors -> '+IntToStr(c);
 end;   
- 
+
+
+procedure PluginInit(var sin, sout: Text); cdecl; export;
+begin
+end; 
 
 function GetPluginCommand:String; cdecl; export;
 begin
@@ -135,6 +139,7 @@ end;
                 
 
 exports
+    PluginInit,
     OnJoinRoom,
     OnJoinLobby,
     OnQuit,
