@@ -221,7 +221,7 @@ begin
 end;   
  
  
-procedure PLuginInit(var sin, sout: Text); cdecl; export;
+procedure PluginInit(var sin, sout: Text); cdecl; export;
 begin
 end;
 

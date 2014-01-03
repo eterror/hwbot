@@ -4,6 +4,8 @@
  * TODO: Change database to fresh
 *)
 
+{$MODE OBJFPC}
+
 unit geoip;
 
 interface
@@ -52,10 +54,13 @@ begin
 	ip:=copy(line, 1, pos(#32, line)-1);
 	country:=copy(line, pos(#32, line)+1, length(line));
 	
-	if (IntToStr(n) = ip) then
-	begin
-	    getip:=country;
-	    break;
+	try
+	    if (IntToStr(n) = ip) then
+	    begin
+		getip:=country;
+		break;
+	    end;
+	except
 	end;
     end;
     
@@ -73,6 +78,7 @@ begin
     src[length(src)-4]:=' ';
     src:=trim(src);
 
+    try
     getCountry:=geoip.getIP(StrToInt(copy(src, 1, pos('.',src)-1)),
                             StrToInt(copy(src, pos('.',src)+1,length(src))),0, 0);
 
@@ -82,6 +88,9 @@ begin
     {...}
     if (getCountry = 'Unknown') then
         getCountry:=geoip.getIP( 0,StrToInt(copy(src, pos('.',src)+1,length(src))),0, 0);
+    except
+	getCountry:='Unknown';
+    end;
 end;
 
 

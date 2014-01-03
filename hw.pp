@@ -583,6 +583,11 @@ begin
 	    for k:=1 to (pc) do
 		if (copy(s2, 1, pos(#32, s2)-1) = plugin[k].cmd) or (plugin[k].cmd = s2) then
 		begin
+		    try
+			plugin[k].gInit(sin, sout);
+		    except
+		    end;
+		    
 		    try 
 			output:=plugin[k].Parse(s1+':'+s2, user, HW_NICK);
 			
@@ -728,12 +733,7 @@ begin
     Pointer(plugin[pc].gname):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginName');
     Pointer(plugin[pc].ghelp):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginHelp');
     Pointer(plugin[pc].gusage):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginUsage');
-    
-    try
-	Pointer(plugin[pc].ginit):=GetProcedureAddress(plugin[pc].hnd, 'PluginInit');
-    except
-    end;
-
+    Pointer(plugin[pc].ginit):=GetProcedureAddress(plugin[pc].hnd, 'PluginInit');
 
     if  (Pointer(plugin[pc].parse) = nil) or
 	(Pointer(plugin[pc].onquit) = nil) or
@@ -744,7 +744,8 @@ begin
 	(Pointer(plugin[pc].gauthor) = nil) or
 	(Pointer(plugin[pc].ghelp) = nil) or
 	(Pointer(plugin[pc].gusage) = nil) or
-	(Pointer(plugin[pc].gname) = nil) then
+	(Pointer(plugin[pc].gname) = nil) or
+	(Pointer(plugin[pc].gInit) = nil) then
     begin
 	writeln('[!] Not defined all functions in plugin. Case sensivity may cause this errors.');
 	pc-=1;
@@ -758,11 +759,6 @@ begin
     plugin[pc].usage:=plugin[pc].gusage();
     plugin[pc].help:=plugin[pc].ghelp();
     plugin[pc].fname:=name;
-    
-    try
-	plugin[pc].gInit(sin, sout);
-    except
-    end;
     
     writeln('[P:',pc,':NAME]: ',plugin[pc].name,' / ',plugin[pc].author,' ',plugin[pc].ver,' -> ',plugin[pc].cmd);    
     

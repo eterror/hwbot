@@ -61,7 +61,8 @@ var
     nick:	String;
     param:	String;
     s1, s3,
-    s2, s4:	String;
+    s2, s4, s5:	String;
+    i:		Integer;
     
 begin
     nick:=copy(s, 1, pos(':', s)-1);
@@ -78,6 +79,9 @@ begin
     
     s1:=ExtractWord(1, param, [':']);
 
+    if (nick = s1) then
+	exit;
+	
     if not(isOnline(s1)) then
     begin
         PluginParse:=nick+': '+param+' is offline';
@@ -86,19 +90,17 @@ begin
 
     writeln(bout, 'INFO');
     writeln(bout, param,#10);
-
+    
     readln(bin);
     readln(bin);
     readln(bin);
-
+    
     readln(bin, s2);
     readln(bin, s3);
     readln(bin, s4);
 
-    //PluginParse:=nick+': '+param+'('+getCountry(s2)+'):'+#32+s3+#32+s4;
-    writeln(bout,'CHAT',#10,nick+': '+param+'('+getCountry(s2)+'):'+#32+s3+#32+s4,#10);
     PluginParse:='';
-                        
+    writeln(bout,'CHAT',#10,nick+': '+param+'('+GetCountry(s2)+'):'+#32+s3+#32+s4,#10);                        
 end;   
  
 procedure PluginInit(var sin, sout: Text); cdecl; export;
