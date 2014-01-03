@@ -11,7 +11,8 @@
 TODO:
  - better support for NOTICE and ERROR
  - better support for USER FLAGS (plugin command: onFlagChange)
- - sometimes bot use 100% of cpu
+ - add support for registered nickname (hw.conf:password)
+ - sometimes bot use 100% of cpu (?)
 }
 
 program Hedgewars_InfoBOT(lobby, commander);
@@ -43,27 +44,6 @@ function hwLoadPlugin(name:string):byte;forward;
 function hwUnloadPlugin(id: Integer):Boolean;forward;
 function hwReloadPlugin(id: byte; name:string):byte;forward;
 function hwLoadConfig():Boolean;forward;
-
-
-function getCountry(src: String):String; deprecated;
-begin
-    src[1]:=' ';
-    src[length(src)]:=' ';
-    src[length(src)-1]:=' ';
-    src[length(src)-2]:=' ';
-    src[length(src)-3]:=' ';
-    src[length(src)-4]:=' ';
-    src:=trim(src);
-    
-    getCountry:=geoip.getIP(StrToInt(copy(src, 1, pos('.',src)-1)), 
-			    StrToInt(copy(src, pos('.',src)+1,length(src))),0, 0);
-			    
-    if (getCountry = 'Unknown') then
-	getCountry:=geoip.getIP( StrToInt(copy(src, 1, pos('.',src)-1)),0, 0, 0);
-			    
-    if (getCountry = 'Unknown') then
-	getCountry:=geoip.getIP( 0,StrToInt(copy(src, pos('.',src)+1,length(src))),0, 0);
-end;
 
 
 function isOnline(who: String):boolean;

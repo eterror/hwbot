@@ -1,10 +1,16 @@
+(*
+ * simple unit for geolocalization by solaris (solargrim@gmail.com)
+ * 
+ * TODO: Change database to fresh
+*)
+
 unit geoip;
 
 interface
     
 {function setpathtodb():boolean;}
 function getip(a, b, c, d: Cardinal):string;    
-
+function getCountry(src: String):String; deprecated;
 
 implementation
 
@@ -54,6 +60,28 @@ begin
     end;
     
     close(f);
+end;
+
+
+function getCountry(src: String):String; deprecated;
+begin
+    src[1]:=' ';
+    src[length(src)]:=' ';
+    src[length(src)-1]:=' ';
+    src[length(src)-2]:=' ';
+    src[length(src)-3]:=' ';
+    src[length(src)-4]:=' ';
+    src:=trim(src);
+
+    getCountry:=geoip.getIP(StrToInt(copy(src, 1, pos('.',src)-1)),
+                            StrToInt(copy(src, pos('.',src)+1,length(src))),0, 0);
+
+    if (getCountry = 'Unknown') then
+        getCountry:=geoip.getIP( StrToInt(copy(src, 1, pos('.',src)-1)),0, 0, 0);
+
+    {...}
+    if (getCountry = 'Unknown') then
+        getCountry:=geoip.getIP( 0,StrToInt(copy(src, pos('.',src)+1,length(src))),0, 0);
 end;
 
 
