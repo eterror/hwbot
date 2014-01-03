@@ -34,6 +34,7 @@ var
     HW_NICK:    String;
     HW_PLUGINS: String;
     HW_ROOM:    String;
+    HW_PASSWORD:String;
 
 
 const

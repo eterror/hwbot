@@ -51,7 +51,7 @@ var
     i:	Integer;
     
 begin
-    for i:=0 to high(user)+1 do
+    for i:=0 to high(user) do
 	if (user[i].nickname = who) then
 	    exit(TRUE);
 	
@@ -64,7 +64,7 @@ var
     i:	Integer;
     
 begin
-    for i:=0 to (high(user)+1) do
+    for i:=0 to (high(user)) do
 	if (user[i].nickname = name) then 
         begin
     	    user[i].mode:=flag;
@@ -209,12 +209,10 @@ begin
     
 	if (s1 = HW_NICK) then
 	begin
-	    writeln('[#] Reconnecting...');
-	    sleep(1000);
+	    writeln('[#] Reconnecting (15s)...');
 	    hwDisconnect();
-	    sleep(250);
+	    sleep(15000);
 	    hwConnect();
-	    sleep(250);
 	    hwRegister();
 	    exit;
 	end;
@@ -249,7 +247,7 @@ begin
      if (input = 'LOBBY:JOINED') then 
      begin
 	readln(sIn, s1);
-	writeln('[#] ',s1,' connected (lobby).');
+	writeln('[#] ',s1,' connected.');
 	
 	// plugin:OnLobbyJoin
 	if (pc <> 0) then    
@@ -348,7 +346,7 @@ begin
 	    if (pc <> 0) and (s3 <> '') then    
 	    begin
 		for k:=1 to (pc) do
-		    if (trim(s3) = trim(plugin[k].name)) then
+		    if (s3 = trim(plugin[k].name)) then
 		    begin
 			try 
 			    writeln(sout, 'CHAT'+#10+'HELP ('+s3+'): '+plugin[k].ghelp(), #10);
@@ -358,7 +356,7 @@ begin
 			    exit;
 			end;
 	    
-			exit;//break
+			exit;
 		    end;
 		    
 		writeln(sout, 'CHAT'+#10+s1+': Help is not available.'+#10);
@@ -404,7 +402,6 @@ begin
 	
 	if (ExtractWord(1, s2, [#32]) = '.join') and (s1 = HW_ADMIN) then
 	begin
-	    //writeln(sout, '',#10, '',#10);
 	    s3:=ExtractWord(2, s2, [#32]);
 	    
 	    if (s3 <> '') then
@@ -472,9 +469,8 @@ begin
 	if (s2 = '.die') then 
 	begin
 	    if (s1 = HW_ADMIN) then 
-	    begin
-		quit:=True; 
-	    end else
+		quit:=True 
+	    else
 	    begin
 		writeln(sout,'CHAT');
 		
@@ -525,7 +521,7 @@ begin
 	    readln(sin, s6); 
 	    readln(sin, s7);
 	
-	    writeln(sout, 'CHAT',#10,s1,': INFO: ',s4,#32,'(',getCountry(s5),')',#32,s6,#32,s7,#10);
+	    writeln(sout, 'CHAT',#10,s1,': ',s4,#32,'(',getCountry(s5),')',#32,s6,#32,s7,#10);
 	end;
  
  
@@ -533,7 +529,7 @@ begin
 	begin
 	    writeln('USER LIST ->');
 	
-	    for i:=1 to high(user) do 
+	    for i:=0 to high(user) do 
 		if (user[i].nickname <> '') then
 		    write(user[i].nickname + '(',user[i].mode,') ');
 	end;
@@ -992,6 +988,14 @@ begin
 	    
 	    if (p <> '') then
 		HW_ROOM:=p;
+	end;
+	
+	if (copy(l, 1, 9) = 'password=') then
+	begin
+	    p:=trim(copy(l, pos('=',l)+1, length(l)));
+	    
+	    if (p <> '') then
+		HW_PASSWORD:=p;
 	end;
     end;
     
