@@ -44,6 +44,7 @@ function hwLoadPlugin(name:string):byte;forward;
 function hwUnloadPlugin(id: Integer):Boolean;forward;
 function hwReloadPlugin(id: byte; name:string):byte;forward;
 function hwLoadConfig():Boolean;forward;
+procedure hwInitPLugins(); forward;
 
 
 function isOnline(who: String):boolean;
@@ -134,6 +135,7 @@ function Parse(input: String) : boolean;
 
 var
     s1, s2, s3, s4, s5, s6, s7,s8: String;  
+    output: AnsiString;
     i, k: integer;  
     
 begin
@@ -368,7 +370,6 @@ begin
 	    
 	
 	    writeln(sOut, 'CHAT');writeln(sout, 'Available public commands:',#10);
-	    writeln(sOut, 'CHAT');writeln(sout, ' .who [username]',#10);
 	    writeln(sout, 'CHAT');writeln(sout, ' .help [command]',#10);
 	    writeln(sOut, 'CHAT');writeln(sout, ' .version',#10);
 	    
@@ -500,34 +501,6 @@ begin
 	end;
     
     
-	if (copy(s2, 1,4)= '.who') then 
-	begin
-	    if (s2 = '.who') or (s2 = '.who ') then
-		exit;
-	
-	    s4:=trim(copy(s2, 6, length(s2)));
-	
-	    if not(isOnline(s4)) then
-	    begin
-		writeln(sout, 'CHAT',#10,s1,': ',s4,' is offline',#10);
-		exit;
-	    end;
-	
-	    writeln(sout, 'INFO');
-	    writeln(sout, s4,#10);
-	
-	    readln(sin);
-	    readln(sin);
-	    readln(sin);
-	
-	    readln(sin, s5); 
-	    readln(sin, s6); 
-	    readln(sin, s7);
-	
-	    writeln(sout, 'CHAT',#10,s1,': ',s4,#32,'(',getCountry(s5),')',#32,s6,#32,s7,#10);
-	end;
- 
- 
 	if (s2 = '.users') then 
 	begin
 	    writeln('USER LIST ->');
@@ -618,15 +591,17 @@ begin
 	end;
 	
 	
-	// Commands for plugins
+	// run plugins by defined command
 	if (pc <> 0) then    
 	    for k:=1 to (pc) do
 		if (copy(s2, 1, pos(#32, s2)-1) = plugin[k].cmd) or (plugin[k].cmd = s2) then
 		begin
 		    try 
-			writeln(sout, 'CHAT'+#10+plugin[k].Parse(s1+':'+s2, user, HW_NICK), #10);
+			output:=plugin[k].Parse(s1+':'+s2, user, HW_NICK);
+			
+			if (length(output) <> 0) then
+			    writeln(sout, 'CHAT'+#10,output, #10);
 		    except
-			{$IFDEF DEBUG}writeln('[*] Commands for plugins.'); {$ENDIF}
 			continue;
 		    end;
 	    
@@ -713,11 +688,14 @@ var
     
 begin
     pc+=1;
+    plugin[pc]:=TPlugin.Create;
+    
     write('[P:',pc,'] ',name,': ');
     
     for i:=1 to (pc-1) do
 	if (plugin[i].fname = name) then
 	begin
+	    plugin[pc].Free;
 	    pc-=1;
 	    writeln('FAILED');
 	    exit(3);
@@ -725,6 +703,7 @@ begin
     
     if (not FileExists(name)) then
     begin
+	plugin[pc].Free;
 	pc-=1;
 	writeln('FAILED');
 	exit(2);
@@ -738,6 +717,7 @@ begin
     
     if (plugin[pc].hnd = 0) then
     begin
+	plugin[pc].Free;
 	writeln('FAILED') ;
 	plugin[pc].cmd:='';
 	pc-=1;
@@ -755,6 +735,11 @@ begin
     Pointer(plugin[pc].gname):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginName');
     Pointer(plugin[pc].ghelp):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginHelp');
     Pointer(plugin[pc].gusage):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginUsage');
+    
+    try
+	Pointer(plugin[pc].init):=GetProcedureAddress(plugin[pc].hnd, 'PluginInit');
+    except
+    end;
 
 
     if  (Pointer(plugin[pc].parse) = nil) or
@@ -792,15 +777,27 @@ begin
     write('[*] Removing plugin -> ',id,': ');
     try
 	UnloadLibrary(plugin[i].hnd);
-	plugin[i].name:='';
-	plugin[i].fname:='';
-	plugin[i].cmd:='';
+	plugin[i].Free;
 	writeln('OK');
 	exit(TRUE)
     except
 	writeln('FAIL');
 	exit(FALSE)
     end;
+end;
+
+
+procedure hwInitPlugins();
+var
+    i:	Integer;
+    
+begin
+    for i:=0 to (pc) do
+	try
+	    plugin[i].Init(sin, sout);
+	except
+	    continue;
+	end;
 end;
 
 
@@ -1036,6 +1033,7 @@ begin
     hwinfo();
     hwConnect();
     hwRegister();
+    hwInitPlugins();
     hwLoop();
     hwDisconnect();
 end.

@@ -12,6 +12,7 @@ plugin: plugins/*.pp
 	fpc plugins/seen.pp
 	fpc plugins/counter.pp
 	fpc plugins/uptime.pp
+	fpc plugins/who.pp
 
 clean:
 	rm -rf *.o

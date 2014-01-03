@@ -1,3 +1,5 @@
+{$MODE OBJFPC}
+
 library plugin_memo;
 
 
@@ -384,6 +386,11 @@ begin
     saveDB();
 end;   
  
+ 
+procedure PluginInit(var sin, sout: Text); cdecl; export;
+begin
+end;
+
 
 function GetPluginCommand:String; cdecl; export;
 begin
@@ -422,6 +429,7 @@ end;
                 
 
 exports
+    PluginInit,
     OnJoinLobby,
     OnJoinRoom,
     OnQuit,

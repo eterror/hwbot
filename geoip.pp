@@ -38,7 +38,7 @@ function getip(a, b, c, d: Cardinal):string;
 begin
     getip:='Unknown';
     
-    assign(f, 'ip.db');
+    assign(f, 'plugins/ip.db');
     {$I-}reset(f);{$I+}
     
     if (IOResult <> 0) then

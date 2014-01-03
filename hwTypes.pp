@@ -1,3 +1,5 @@
+{$MODE OBJFPC}
+
 unit hwTypes;
 
 interface
@@ -19,7 +21,7 @@ type
 	upname:		String;
 	srcip:		String;
     end;
-
+    
 var
     sAddr:      TInetSockAddr;
     S:          LongInt;
@@ -42,12 +44,13 @@ const
     HW_PORT     = 46631;
     HW_PROTO    = 47;
     HW_CONFIG   = 'hw.conf';
-    VERSION     = '0.3rc1';
+    VERSION     = '0.3rc2';
     HW_ADMIN    = 'terror';
 
 
 type
-    TPlugin = object
+    TPlugin = class
+    public var
         hnd:            TLibHandle;
         cmd:            String[64];
         fname:          String;
@@ -56,8 +59,9 @@ type
         ver:            String[32];
         usage:          String;
         help:           AnsiString;
-
-        type
+        
+    public type
+	    TInit = 		procedure (var sin, sout: Text); cdecl;
             TParse =            function (const s: String; const u: array of TUser; botnick: String):String; cdecl;
             TOnJoinLobby =      function (const s: String):String; cdecl;
             TOnJoinRoom =       function (const s: String):String; cdecl;
@@ -69,7 +73,7 @@ type
             TGetPluginUsage =   function: String; cdecl;
             TGetPluginHelp =    function: AnsiString; cdecl;
 
-        var
+    public var
             gcmd:               TGetCommand;
             gver:               TGetPluginVersion;
             gauthor:            TGetPluginAuthor;
@@ -80,6 +84,7 @@ type
             onjoinlobby:        TOnJoinLobby;
             onjoinroom:         TOnJoinRoom;
             onquit:             TOnQuit;
+            init:		TInit;
     end;
 
     TRoom = packed record
@@ -96,6 +101,7 @@ type
 
 
 implementation
+
 
 begin
 end.
