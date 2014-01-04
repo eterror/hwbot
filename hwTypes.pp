@@ -4,8 +4,7 @@ unit hwTypes;
 interface
 
 uses
-    sockets,
-    dynlibs;
+    sockets;
 
 
 const
