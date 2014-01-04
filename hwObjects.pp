@@ -277,7 +277,7 @@ begin
     try
         UnloadLibrary(hnd);
         //FreeLibrary(hnd);
-        Free;
+        //Free;
         writeln('OK');
         exit(TRUE)
     except
@@ -467,7 +467,7 @@ begin
             
             if (plugin[pc].Load(dir) <> 0) then
             begin
-        	plugin[pc].Free;
+        	//plugin[pc].Free;
         	pc-=1;
     	    end;
         end;
