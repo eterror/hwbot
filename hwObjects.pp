@@ -53,7 +53,7 @@ type
             
             function Reload():Byte;
             function Unload():Boolean;
-            //function Load(name: String):Byte;
+            function Load(n: String):Byte;
     end;
 
 	
@@ -66,10 +66,11 @@ type
 	function Disconnect():boolean;
 	function Connect():boolean;
 	function Register():boolean;
+	
 	function Info():boolean;
-	function LoadPlugin(name:string):byte;
 	function LoadConfig():Boolean;
-	procedure InitPLugins(); 
+	
+	procedure InitPlugins(); 
 	
 	function uAddUser(name: String; flag: String):boolean;
 	function uDelUser(name: String):boolean;
@@ -208,88 +209,65 @@ begin
 end;
 
 
-function THwbot.LoadPlugin(name: String):Byte;
+function TPlugin.Load(n: String):Byte;
 var
     i:  Integer;
 
 begin
-    pc+=1;
-    plugin[pc]:=TPlugin.Create;
+    write('[@] Loading plugin -> ',n,': ');
 
-    write('[P:',pc,'] ',name,': ');
-
-    for i:=1 to (pc-1) do
-        if (plugin[i].fname = name) then
-        begin
-            plugin[pc].Free;
-            pc-=1;
-            writeln('FAILED');
-            exit(3);
-        end;
-
-    if (not FileExists(name)) then
+    if (not FileExists(n)) then
     begin
-        plugin[pc].Free;
-        pc-=1;
+        Free;
         writeln('FAILED');
-        exit(2);
+        exit(1);
     end;
 
     try
-        plugin[pc].hnd:=LoadLibrary(name);
+        hnd:=LoadLibrary(n);
     except
-        {...}
+        //exit(2);
     end;
-    if (plugin[pc].hnd = 0) then
+    
+    if (hnd = 0) then
     begin
-        plugin[pc].Free;
+        Free;
         writeln('FAILED') ;
-        plugin[pc].cmd:='';
-        pc-=1;
-        exit(1);
-    end else
-        writeln('OK ');
-
-    Pointer(plugin[pc].parse):=GetProcedureAddress(plugin[pc].hnd, 'PluginParse');
-    Pointer(plugin[pc].onquit):=GetProcedureAddress(plugin[pc].hnd, 'OnQuit');
-    Pointer(plugin[pc].onjoinroom):=GetProcedureAddress(plugin[pc].hnd, 'OnJoinRoom');
-    Pointer(plugin[pc].onjoinlobby):=GetProcedureAddress(plugin[pc].hnd, 'OnJoinLobby');
-    Pointer(plugin[pc].gcmd):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginCommand');
-    Pointer(plugin[pc].gver):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginVersion');
-    Pointer(plugin[pc].gauthor):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginAuthor');
-    Pointer(plugin[pc].gname):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginName');
-    Pointer(plugin[pc].ghelp):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginHelp');
-    Pointer(plugin[pc].gusage):=GetProcedureAddress(plugin[pc].hnd, 'GetPluginUsage');
-    Pointer(plugin[pc].ginit):=GetProcedureAddress(plugin[pc].hnd, 'PluginInit');
-
-    if  (Pointer(plugin[pc].parse) = nil) or
-        (Pointer(plugin[pc].onquit) = nil) or
-        (Pointer(plugin[pc].onjoinlobby) = nil) or
-        (Pointer(plugin[pc].onjoinroom) = nil) or
-        (Pointer(plugin[pc].gcmd) = nil) or
-        (Pointer(plugin[pc].gver) = nil) or
-        (Pointer(plugin[pc].gauthor) = nil) or
-        (Pointer(plugin[pc].ghelp) = nil) or
-        (Pointer(plugin[pc].gusage) = nil) or
-        (Pointer(plugin[pc].gname) = nil) or
-        (Pointer(plugin[pc].gInit) = nil) then
-    begin
-        writeln('[!] Not defined all functions in plugin. Case sensivity may cause this errors.');
-        pc-=1;
-        exit(4);
+        exit(2);
     end;
 
-    plugin[pc].cmd:=plugin[pc].gcmd();
-    plugin[pc].ver:=plugin[pc].gver();
-    plugin[pc].author:=plugin[pc].gauthor();
-    plugin[pc].name:=plugin[pc].gname();
-    plugin[pc].usage:=plugin[pc].gusage();
-    plugin[pc].help:=plugin[pc].ghelp();
-    plugin[pc].fname:=name;
+    Pointer(parse):=GetProcedureAddress(hnd, 'PluginParse');
+    Pointer(onquit):=GetProcedureAddress(hnd, 'OnQuit');
+    Pointer(onjoinroom):=GetProcedureAddress(hnd, 'OnJoinRoom');
+    Pointer(onjoinlobby):=GetProcedureAddress(hnd, 'OnJoinLobby');
+    Pointer(gcmd):=GetProcedureAddress(hnd, 'GetPluginCommand');
+    Pointer(gver):=GetProcedureAddress(hnd, 'GetPluginVersion');
+    Pointer(gauthor):=GetProcedureAddress(hnd, 'GetPluginAuthor');
+    Pointer(gname):=GetProcedureAddress(hnd, 'GetPluginName');
+    Pointer(ghelp):=GetProcedureAddress(hnd, 'GetPluginHelp');
+    Pointer(gusage):=GetProcedureAddress(hnd, 'GetPluginUsage');
+    Pointer(ginit):=GetProcedureAddress(hnd, 'PluginInit');
 
-    writeln('[P:',pc,':NAME]: ',plugin[pc].name,' / ',plugin[pc].author,' ',plugin[pc].ver,' -> ',plugin[pc].cmd);
+    if  (Pointer(parse) = nil) or      (Pointer(onquit) = nil) or (Pointer(onjoinlobby) = nil) or
+        (Pointer(onjoinroom) = nil) or (Pointer(gcmd) = nil) or   (Pointer(gver) = nil) or 
+        (Pointer(gauthor) = nil) or    (Pointer(ghelp) = nil) or  (Pointer(gusage) = nil) or
+        (Pointer(gname) = nil) or      (Pointer(gInit) = nil) then
+    begin
+        writeln('FAIL: Not defined all functions in plugin.');
+        exit(3);
+    end;
 
-    LoadPlugin:=0;
+    cmd:=gCmd();
+    ver:=gVer();
+    author:=gAuthor();
+    name:=gName();
+    usage:=gUsage();
+    help:=gHelp();
+    fname:=n;
+
+    writeln(name,':',ver,' / ',author,' -> ',cmd);
+
+    exit(0);
 end;
 
 
@@ -297,8 +275,8 @@ function TPlugin.Unload():boolean;
 begin
     write('[*] Removing plugin -> ',name,': ');
     try
-        //UnloadLibrary(hnd);
-        FreeLibrary(hnd);
+        UnloadLibrary(hnd);
+        //FreeLibrary(hnd);
         Free;
         writeln('OK');
         exit(TRUE)
@@ -454,6 +432,7 @@ var
     l:  String;
     p:  String;
     e:  Byte;
+    dir: String;
 
 begin
     write('[*] Loading config file (',HW_CONFIG,'): ');
@@ -479,9 +458,18 @@ begin
             p:=trim(copy(l, pos('=',l)+1, length(l)));
 
             if (pos('/',p) <> 0) then
-                e:=LoadPlugin(p)
+                dir:=p
             else
-                e:=LoadPlugin(HW_PLUGINS+p);
+                dir:=(HW_PLUGINS+p);
+                
+    	    pc+=1;
+            plugin[pc]:=TPlugin.Create;
+            
+            if (plugin[pc].Load(dir) <> 0) then
+            begin
+        	plugin[pc].Free;
+        	pc-=1;
+    	    end;
         end;
 
         if (copy(l, 1,5) = 'nick=') then

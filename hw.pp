@@ -1,6 +1,6 @@
 (*
  * InfoBOT, lobby commander (a bot a for Hedgewars lobby chat)
- * Copyright (c) 2013 Solaris <solargrim@gmail.com>
+ * Copyright (c) 2013-12/2014 Solaris <solargrim@gmail.com>
 *)
 
 {$UNDEF DEBUG}
@@ -9,7 +9,7 @@
 
 {
 TODO:
- - better support for NOTICE and ERROR
+ - better support for NOTICE
  - better support for USER FLAGS (plugin command: onFlagChange)
  - sometimes bot use 100% of cpu (?)
 }
@@ -17,17 +17,12 @@ TODO:
 program Hedgewars_InfoBOT(lobby, commander);
 
 uses
-    linux,
-    sockets,
-    errors,
     sysutils,
     dateutils,
-    geoip,
     baseunix,
-    dynlibs,
     strutils,
-    hwTypes,
-    hwObjects;
+    hwTypes in 'hwTypes.pp',
+    hwObjects in 'hwObjects.pp';
     
     
 var
@@ -35,23 +30,7 @@ var
  
  
 procedure Main();cdecl;forward;
-
-
-function uAddFlag(name: String; flag: string):boolean;
-var
-    i:	Integer;
-    
-begin
-    for i:=0 to (high(hw.user)) do
-	if (hw.user[i].nickname = name) then 
-        begin
-    	    hw.user[i].mode:=flag;
-    	    exit(TRUE);
-        end; 
-     
-    exit(FALSE);
-end;
-
+function Parse(input: String) : Boolean; forward;
 
 function Parse(input: String) : boolean;
     
@@ -221,8 +200,9 @@ begin
 	readln(sin, s1);
 	readln(sin, s2);
 	writeln('[#] ',s2,': new user flag: ',s1);
-	uAddFlag(s2, s1);
-    
+	
+	//uAddFlag
+	
 	if (s1 = '-i') then 
 	begin
 	    {plugin:onBackLobby}
@@ -428,7 +408,11 @@ begin
  
 	if (s2 = '.fork') and (s1 = HW_ADMIN) then
 	begin
-	    fpfork();
+	    hwTypes.HW_PASSWORD:='';
+	    hwTypes.HW_NICK+=IntToStr(random(10));
+	    
+	    writeln('[*] Clone: ',hwTypes.HW_NICK);
+	    fpFork();
 	end;
 	
     
@@ -486,13 +470,6 @@ begin
 		    exit;
 		end;
 		
-		try
-		    UnLoadLibrary(hw.plugin[i].hnd);
-		except
-		    writeln('FAILED!');
-		    exit;
-		end;
-		
 		case hw.plugin[i].Reload of
 		    0: writeln(sout,'CHAT'+#10+s1+': Plugin '+hw.plugin[i].name+' reloaded.',#10);
 		    1: writeln(sout,'CHAT'+#10+s1+': Failed to reload plugin (file not exists).',#10);
@@ -511,15 +488,22 @@ begin
 		
 		if (pos(s3, '.so') = 0) then
 		    s3+='.so';
+		    
+		hw.pc+=1;
 		
-		case hw.LoadPlugin(s3) of
-		    0: writeln(sout, s1,': Plugin loaded: ',s3,#10);
-		    1: writeln(sout, s1,': Plugin error (not exists).',#10);
-		    2: writeln(sout, s1,': Plugin do not exists (wrong patch?).',#10);
-		    3: writeln(sout, s1,': Plugin already loaded.',#10);
-		    4: writeln(sout, s1,': Plugin deprecated.',#10);
+		with hw do plugin[pc]:=TPlugin.Create;
+		
+		case (hw.plugin[hw.pc].Load(s3)) of
+		    0: begin
+			    writeln(sout, s1,': Plugin loaded: ',hw.plugin[hw.pc].name+#10);
+			    exit;
+		       end;
+		    1: writeln(sout, s1,': Plugin error: File does not exists.',#10);
+		    2: writeln(sout, s1,': Plugin error: Failed to load library.',#10);
+		    3: writeln(sout, s1,': Plugin error: Is not valid or deprecated.',#10);
 		end;
-
+		
+		hw.pc-=1;
 		exit;
 	    end;
 	    
