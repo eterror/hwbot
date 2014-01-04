@@ -10,18 +10,16 @@ uses
 
 
 const
-    HW_MAXUSERS	= 2048;
+    HW_MAXUSERS	  = 2048;
     HW_MAXPLUGINS = 16;
+    HW_IP       = '140.247.62.101';
+    HW_PORT     = 46631;
+    HW_PROTO    = 47;
+    HW_CONFIG   = 'hw.conf';
+    VERSION     = '0.3rc3';
+    HW_ADMIN    = 'terror';
 
 
-type
-    TUser = packed record
-	mode:		String;
-	nickname: 	String;
-	upname:		String;
-	srcip:		String;
-    end;
-    
 var
     sAddr:      TInetSockAddr;
     S:          LongInt;
@@ -39,17 +37,15 @@ var
     HW_PASSWORD:String;
 
 
-const
-    HW_IP       = '140.247.62.101';
-    HW_PORT     = 46631;
-    HW_PROTO    = 47;
-    HW_CONFIG   = 'hw.conf';
-    VERSION     = '0.3rc2';
-    HW_ADMIN    = 'terror';
-
-
 type
-    TPlugin = class
+    TUser = packed record
+	mode:		String;
+	nickname: 	String;
+	upname:		String;
+	srcip:		String;
+    end;    
+    
+    TPlugin = class(TObject)
     public var
         hnd:            TLibHandle;
         cmd:            String[64];
@@ -61,17 +57,17 @@ type
         help:           AnsiString;
         
     public type
-	    TPluginInit = 	procedure (var sin, sout: Text); cdecl;
-            TParse =            function (const s: String; const u: array of TUser; botnick: String):String; cdecl;
-            TOnJoinLobby =      function (const s: String):String; cdecl;
-            TOnJoinRoom =       function (const s: String):String; cdecl;
-            TOnQuit =           function (const s: String):String; cdecl;
-            TGetCommand =       function :String; cdecl;
-            TGetPluginVersion = function :String; cdecl;
-            TGetPluginAuthor =  function: String; cdecl;
-            TGetPluginName =    function: String; cdecl;
-            TGetPluginUsage =   function: String; cdecl;
-            TGetPluginHelp =    function: AnsiString; cdecl;
+	    TPluginInit =	procedure (var sin, sout: Text); cdecl;
+            TParse =		function (const s: String; const u: array of TUser; botnick: String):String; cdecl;
+            TOnJoinLobby =	function (const s: String):String; cdecl;
+            TOnJoinRoom = 	function (const s: String):String; cdecl;
+            TOnQuit =          	function (const s: String):String; cdecl;
+            TGetCommand =      	function :String; cdecl;
+            TGetPluginVersion =	function :String; cdecl;
+            TGetPluginAuthor = 	function: String; cdecl;
+            TGetPluginName =   	function: String; cdecl;
+            TGetPluginUsage =  	function: String; cdecl;
+            TGetPluginHelp =   	function: AnsiString; cdecl;
 
     public var
             gcmd:               TGetCommand;
@@ -98,10 +94,7 @@ type
         teams:   String;
     end;
 
-
-
 implementation
-
 
 begin
 end.

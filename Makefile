@@ -1,9 +1,10 @@
 all: hw plugin
 zip: clean compress
 
-hw: hw.pp geoip.pp hwTypes.pp
+hw: hw.pp geoip.pp hwTypes.pp hwObjects.pp
 	fpc geoip.pp
 	fpc hwTypes.pp
+	fpc hwObjects.pp
 	fpc hw.pp
 
 plugin: plugins/*.pp
