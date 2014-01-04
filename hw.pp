@@ -324,6 +324,13 @@ begin
 	    exit;
 	end;
 	
+	if (ExtractWord(1, s2, [#32]) = '.reload') and (s1 = HW_ADMIN) then
+	begin
+	    if (hw.LoadConfig()) then
+		writeln(sout, 'CHAT',#10, s1,': config reloaded.',#10) else
+		writeln(sout, 'CHAT',#10, s1,': Failed to reload config.',#10);
+		
+	end;
 	
 	if (ExtractWord(1, s2, [#32]) = '.join') and (s1 = HW_ADMIN) then
 	begin
@@ -449,7 +456,8 @@ begin
 		for k:=1 to (hw.pc) do
 		begin
 		    try
-			writeln(sout, 'CHAT'+#10+s1,': ',k,'. ',hw.plugin[k].name,' -> ',hw.plugin[k].author,' (',hw.plugin[k].fname,'):',hw.plugin[k].ver,' (',hw.plugin[k].cmd,')'#10);
+			if (hw.plugin[k].hnd <> 0) then
+			    writeln(sout, 'CHAT'+#10+s1,': ',k,'. ',hw.plugin[k].name,' -> ',hw.plugin[k].author,' (',hw.plugin[k].fname,'):',hw.plugin[k].ver,' (',hw.plugin[k].cmd,')'#10);
 		    except
 			continue;
 		    end;

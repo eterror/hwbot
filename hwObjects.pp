@@ -276,8 +276,7 @@ begin
     write('[*] Removing plugin -> ',name,': ');
     try
         UnloadLibrary(hnd);
-        //FreeLibrary(hnd);
-        //Free;
+        hnd:=0;
         writeln('OK');
         exit(TRUE)
     except
@@ -442,9 +441,11 @@ begin
     if (IOResult <> 0) then
     begin
         writeln('Failed.');
-        exit;
+        exit(FALSE);
     end else
         writeln('OK');
+        
+    pc:=0;
 
     while not (eof(f)) do
     begin
@@ -509,7 +510,8 @@ begin
         end;
     end;
 
-    close(f)
+    close(f);
+    exit(TRUE);
 end;
 
 
