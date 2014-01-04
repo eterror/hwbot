@@ -14,9 +14,48 @@ uses
     errors;
 
 type
+    TPlugin = class(TObject)
+    public var
+        hnd:            TLibHandle;
+        cmd:            String[64];
+        fname:          String;
+        name:           String[64];
+        author:         String[128];
+        ver:            String[32];
+        usage:          String;
+        help:           AnsiString;
+        
+    public type
+            TPluginInit =        procedure (var sin, sout: Text); cdecl;
+            TParse =                function (const s: String; const u: array of TUser; botnick: String):String; cdecl;
+            TOnJoinLobby =        function (const s: String):String; cdecl;
+            TOnJoinRoom =         function (const s: String):String; cdecl;
+            TOnQuit =                  function (const s: String):String; cdecl;
+            TGetCommand =              function :String; cdecl;
+            TGetPluginVersion =        function :String; cdecl;
+            TGetPluginAuthor =         function: String; cdecl;
+            TGetPluginName =           function: String; cdecl;
+            TGetPluginUsage =          function: String; cdecl;
+            TGetPluginHelp =           function: AnsiString; cdecl;
+
+    public var
+            gcmd:               TGetCommand;
+            gver:               TGetPluginVersion;
+            gauthor:            TGetPluginAuthor;
+            gname:              TGetPluginName;
+            ghelp:              TGetPluginHelp;
+            gusage:             TGetPluginUsage;
+            parse:              TParse;
+            onjoinlobby:        TOnJoinLobby;
+            onjoinroom:         TOnJoinRoom;
+            onquit:             TOnQuit;
+            ginit:              TPluginInit;
+    end;
+
+	
     THwbot = class (TObject)
     	user:       array of hwTypes.TUser;
-	plugin:     array of hwTypes.TPlugin;
+	plugin:     array of TPlugin;
 	pc:         Byte;   
 	        
 	function Reconnect():boolean;
@@ -33,10 +72,27 @@ type
 	
 	function uAddUser(name: String; flag: String):boolean;
 	function uDelUser(name: String):boolean;
+	function uAddFlag(name: String; flag: string):boolean;
     end;
 
 
 implementation
+
+function THwbot.uAddFlag(name: String; flag: string):boolean;
+var
+    i:  Integer;
+
+begin
+    for i:=0 to (high(user)) do
+        if (user[i].nickname = name) then
+        begin
+            user[i].mode:=flag;
+            exit(TRUE);
+        end;
+
+    exit(FALSE);
+end;
+
 
 function THwbot.uAddUser(name: String; flag: String):boolean;
 var

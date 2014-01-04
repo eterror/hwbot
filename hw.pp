@@ -558,9 +558,9 @@ end;
 function hwLoop():boolean;
 begin
     repeat
-	readln(sIn, line);
-	{$IFDEF DEBUG}if line<>'' then writeln(' -> "',line,'"');{$ENDIF}
-	Parse(line);
+	readln(sIn, hwTypes.line);
+	{$IFDEF DEBUG}if hwTypes.line<>'' then writeln(' -> "',hwTypes.line,'"');{$ENDIF}
+	Parse(hwTypes.line);
     until (quit);
     
     exit(true);
