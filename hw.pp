@@ -493,9 +493,13 @@ begin
 		    exit;
 		end;
 		
-		if (hw.ReloadPlugin(i, hw.plugin[i].fname) = 0) then
-		    writeln(sout,'CHAT'+#10+s1+': Plugin '+hw.plugin[i].name+' reloaded.',#10) else
-		    writeln(sout,'CHAT'+#10+s1+': Failed to reload plugin.',#10);
+		case hw.plugin[i].Reload of
+		    0: writeln(sout,'CHAT'+#10+s1+': Plugin '+hw.plugin[i].name+' reloaded.',#10);
+		    1: writeln(sout,'CHAT'+#10+s1+': Failed to reload plugin (file not exists).',#10);
+		    2: writeln(sout,'CHAT'+#10+s1+': Failed to reload plugin (not all functions defined).',#10);
+		    3: writeln(sout,'CHAT'+#10+s1+': Failed to reload plugin (wtf?).',#10);
+		end;
+		
 		exit;
 	    end;
 	    
@@ -503,7 +507,10 @@ begin
 	    begin
 		writeln(sout, 'CHAT');
 		
-		s3:=HW_PLUGINS+ExtractWord(3, s2,[#32])+'.so';
+		s3:=HW_PLUGINS+ExtractWord(3, s2,[#32]);
+		
+		if (pos(s3, '.so') = 0) then
+		    s3+='.so';
 		
 		case hw.LoadPlugin(s3) of
 		    0: writeln(sout, s1,': Plugin loaded: ',s3,#10);
@@ -524,7 +531,7 @@ begin
 		    exit;
 		end;
 		
-		if (hw.UnloadPlugin(k)) then
+		if (hw.plugin[k].Unload()) then
 		    writeln(sout, 'CHAT',#10,s1,': Plugin removed.',#10)
 		else
 		    writeln(sout, 'CHAT',#10,s1,': Error while removing plugin.',#10);

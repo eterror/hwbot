@@ -50,6 +50,10 @@ type
             onjoinroom:         TOnJoinRoom;
             onquit:             TOnQuit;
             ginit:              TPluginInit;
+            
+            function Reload():Byte;
+            function Unload():Boolean;
+            //function Load(name: String):Byte;
     end;
 
 	
@@ -61,12 +65,9 @@ type
 	function Reconnect():boolean;
 	function Disconnect():boolean;
 	function Connect():boolean;
-	function Loop():boolean;
 	function Register():boolean;
 	function Info():boolean;
 	function LoadPlugin(name:string):byte;
-	function UnloadPlugin(id: Integer):Boolean;
-	function ReloadPlugin(id: byte; name:string):byte;
 	function LoadConfig():Boolean;
 	procedure InitPLugins(); 
 	
@@ -166,41 +167,46 @@ begin
     Connect:=TRUE;
 end;
 
-function THwbot.ReLoadPlugin(id: Byte; name: String):Byte;
+function TPlugin.Reload():Byte;
 begin
     try
-        plugin[id].hnd:=LoadLibrary(name);
+        hnd:=LoadLibrary(fname);
     except
         exit(1);
+    end;
+    
+    try
+        Pointer(parse):=GetProcedureAddress(hnd, 'PluginParse');
+        Pointer(onquit):=GetProcedureAddress(hnd, 'OnQuit');
+        Pointer(onjoinlobby):=GetProcedureAddress(hnd, 'OnJoinLobby');
+        Pointer(onjoinroom):=GetProcedureAddress(hnd, 'OnJoinRoom');
+        Pointer(gcmd):=GetProcedureAddress(hnd, 'GetPluginCommand');
+        Pointer(gver):=GetProcedureAddress(hnd, 'GetPluginVersion');
+        Pointer(gauthor):=GetProcedureAddress(hnd, 'GetPluginAuthor');
+        Pointer(gname):=GetProcedureAddress(hnd, 'GetPluginName');
+        Pointer(ghelp):=GetProcedureAddress(hnd, 'GetPluginHelp');
+        Pointer(gusage):=GetProcedureAddress(hnd, 'GetPluginUsage');
+        Pointer(ginit):=GetProcedureAddress(hnd, 'PluginInit');
+    except
+        exit(2);
     end;
 
     try
-        Pointer(plugin[id].parse):=GetProcedureAddress(plugin[id].hnd, 'PluginParse');
-        Pointer(plugin[id].onquit):=GetProcedureAddress(plugin[id].hnd, 'OnQuit');
-        Pointer(plugin[id].onjoinlobby):=GetProcedureAddress(plugin[id].hnd, 'OnJoinLobby');
-        Pointer(plugin[id].onjoinroom):=GetProcedureAddress(plugin[id].hnd, 'OnJoinRoom');
-        Pointer(plugin[id].gcmd):=GetProcedureAddress(plugin[id].hnd, 'GetPluginCommand');
-        Pointer(plugin[id].gver):=GetProcedureAddress(plugin[id].hnd, 'GetPluginVersion');
-        Pointer(plugin[id].gauthor):=GetProcedureAddress(plugin[id].hnd, 'GetPluginAuthor');
-        Pointer(plugin[id].gname):=GetProcedureAddress(plugin[id].hnd, 'GetPluginName');
-        Pointer(plugin[id].ghelp):=GetProcedureAddress(plugin[id].hnd, 'GetPluginHelp');
-        Pointer(plugin[id].gusage):=GetProcedureAddress(plugin[id].hnd, 'GetPluginUsage');
-        Pointer(plugin[id].ginit):=GetProcedureAddress(plugin[id].hnd, 'PluginInit');
-    except
-        exit(1);
+	cmd:=gcmd();
+	ver:=gver();
+	author:=gauthor();
+	name:=gname();
+	usage:=gusage();
+	help:=ghelp();
+	fname:=name;
+	gInit(hwTypes.sin, hwTypes.sout);
+    except;
+	exit(3);
     end;
 
-    plugin[id].cmd:=plugin[id].gcmd();
-    plugin[id].ver:=plugin[id].gver();
-    plugin[id].author:=plugin[id].gauthor();
-    plugin[id].name:=plugin[id].gname();
-    plugin[id].usage:=plugin[id].gusage();
-    plugin[id].help:=plugin[id].ghelp();
-    plugin[id].fname:=name;
-    plugin[id].gInit(hwTypes.sin, hwTypes.sout);
-
-    ReloadPlugin:=0;
+    exit(0);
 end;
+
 
 function THwbot.LoadPlugin(name: String):Byte;
 var
@@ -287,13 +293,13 @@ begin
 end;
 
 
-function THwbot.UnloadPlugin(id: Integer):boolean;
+function TPlugin.Unload():boolean;
 begin
-    write('[*] Removing plugin -> ',id,': ');
+    write('[*] Removing plugin -> ',name,': ');
     try
-        //UnloadLibrary(plugin[i].hnd);
-        FreeLibrary(plugin[i].hnd);
-        plugin[i].Free;
+        //UnloadLibrary(hnd);
+        FreeLibrary(hnd);
+        Free;
         writeln('OK');
         exit(TRUE)
     except
@@ -417,17 +423,6 @@ begin
     writeln(sout, 'QUIT');
     writeln(sout, 'I will be back!',#10);
     close(sOut);
-    exit(TRUE);
-end;
-
-function THwbot.Loop():boolean;
-begin
-    repeat
-        readln(sIn, line);
-        {$IFDEF DEBUG}if line<>'' then writeln(' -> "',line,'"');{$ENDIF}
-        //Parse(line);
-    until (quit);
-
     exit(TRUE);
 end;
 
