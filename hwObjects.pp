@@ -218,7 +218,7 @@ begin
 
     if (not FileExists(n)) then
     begin
-        Free;
+        //Free;
         writeln('FAILED');
         exit(1);
     end;
@@ -231,7 +231,7 @@ begin
     
     if (hnd = 0) then
     begin
-        Free;
+        //Free;
         writeln('FAILED') ;
         exit(2);
     end;
@@ -479,6 +479,14 @@ begin
 
             if (p <> '') then
                 HW_NICK:=p;
+        end;
+        
+        if (copy(l, 1,6) = 'admin=') then
+        begin
+            p:=trim(copy(l, pos('=',l)+1, length(l)));
+
+            if (p <> '') then
+                HW_ADMIN:=p;
         end;
 
         if (copy(l, 1,14) = 'plugins_patch=') then

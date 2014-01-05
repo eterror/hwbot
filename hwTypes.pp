@@ -14,8 +14,7 @@ const
     HW_PORT     = 46631;
     HW_PROTO    = 47;
     HW_CONFIG   = 'hw.conf';
-    VERSION     = '0.3rc4';
-    HW_ADMIN    = 'terror';
+    VERSION     = '0.3rc5';
 
 
 var
@@ -33,6 +32,7 @@ var
     HW_PLUGINS: String;
     HW_ROOM:    String;
     HW_PASSWORD:String;
+    HW_ADMIN   :String;
 
 
 type
