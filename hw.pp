@@ -453,7 +453,11 @@ begin
 	    s8:=ExtractWord(3, s2, [#32]);
 	    
 	    if (s7 = '') and (s8 = '') then 
+	    begin
+		writeln(sout, 'CHAT',#10,s1,': cmdchar = ',HW_CMDCHAR,#10);
+		writeln(sout, 'CHAT',#10,s1,': notices = ',HW_NOTICES,#10);
 		exit;
+	    end;
 
 	    if (s7 <> '') and (s8 = '') then
 	    begin
