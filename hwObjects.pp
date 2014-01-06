@@ -477,8 +477,8 @@ begin
         begin
             p:=trim(copy(l, pos('=',l)+1, length(l)));
 
-            if (p <> '') and (length(p) = 1) then
-                HW_NOTICE:=p;
+            if (p <> '') then
+                HW_NOTICES:=p;
         end;
 
         if (copy(l, 1,8) = 'command=') then

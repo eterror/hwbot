@@ -65,6 +65,7 @@ var
     
 begin
     // BUG
+    PluginParse:='Under construction';
     exit;
     
     nick:=copy(s, 1, pos(':', s)-1);

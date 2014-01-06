@@ -227,7 +227,7 @@ begin
 	
 	    writeln('[#] New room: ',s2);
 	    
-	    if (HW_NOTICE = 'true') or (HW_NOTICE = '1') then	
+	    if (HW_NOTICES = 'true') or (HW_NOTICES = '1') then	
 		writeln(sout, 'CHAT'+#10,'/me -> ',s5,' created new room: ',s2,#10);
 	end;
 	
@@ -264,7 +264,7 @@ begin
 	writeln('[#] [',TimeToStr(Now),'] ',s1,': ',s2);
   
 	// Private bot commands
-	if (copy(s2, 1, 5) = '.help') then
+	if (copy(s2, 1, 5) = HW_CMDCHAR+'help') then
 	begin
 	    s3:=copy(s2, 7, length(s2));
 	    s3:=trim(s3);
@@ -302,7 +302,7 @@ begin
 		try
 		    s8:=hw.plugin[k].cmd;
 		    s8[1]:=HW_CMDCHAR;
-		    writeln(sout, 'CHAT'+#10+'> '+HW_CMDCHAR+s8+#32+hw.plugin[k].usage+' (Plugin)'+ #10);
+		    writeln(sout, 'CHAT'+#10+'> '+s8+#32+hw.plugin[k].usage+' (Plugin)'+ #10);
 		except
 		    continue;
 		end;
@@ -321,13 +321,13 @@ begin
 	end;
     
     
-        if (s2 = '.version') then 
+        if (s2 = HW_CMDCHAR+'version') then 
 	begin
 	    writeln(sout, 'CHAT'+#10+'InfoBOT (hedgewars lobby commander) by solargrim@gmail.com, version: '+VERSION{$IFDEF DEBUG}+'-DEBUG'{$ENDIF},#10);
 	    exit;
 	end;
 	
-	if (ExtractWord(1, s2, [#32]) = '.reload') and (s1 = HW_ADMIN) then
+	if (ExtractWord(1, s2, [#32]) = HW_CMDCHAR+'reload') and (s1 = HW_ADMIN) then
 	begin
 	    if (hw.LoadConfig()) then
 		writeln(sout, 'CHAT',#10, s1,': config reloaded.',#10) else
@@ -335,7 +335,7 @@ begin
 		
 	end;
 	
-	if (ExtractWord(1, s2, [#32]) = '.join') and (s1 = HW_ADMIN) then
+	if (ExtractWord(1, s2, [#32]) = HW_CMDCHAR+'join') and (s1 = HW_ADMIN) then
 	begin
 	    s3:=ExtractWord(2, s2, [#32]);
 	    
@@ -357,7 +357,7 @@ begin
 	end;
 	
 	
-	if (copy(s2, 1, 4) = '.raw') and (s1 = HW_ADMIN) then
+	if (copy(s2, 1, 4) = HW_CMDCHAR+'raw') and (s1 = HW_ADMIN) then
 	begin
 	    s3:=copy(s2, 6, length(s2));
 	    writeln('[*] Sending RAW DATA to server: ',s3);
@@ -372,7 +372,7 @@ begin
 	end;
 	
 	
-	if (copy(s2, 1, 5) = '.kick') and (s1 = HW_ADMIN) then
+	if (copy(s2, 1, 5) = HW_CMDCHAR+'kick') and (s1 = HW_ADMIN) then
 	begin
 	    s3:=ExtractWord(2, s2, [#32]);
 	    
@@ -385,7 +385,7 @@ begin
 	end;
 	
 	
-	if (s2 = '.op') and (s1 = HW_ADMIN) then
+	if (s2 = HW_CMDCHAR+'op') and (s1 = HW_ADMIN) then
 	begin
 	    writeln('[*] Adding room operator status to bot admin');
 	    writeln(sout, 'CMD');
@@ -394,29 +394,30 @@ begin
 	end;
 	
 	
-	if (s2 = '.part') and (s1 = HW_ADMIN) then
+	if (s2 = HW_CMDCHAR+'part') and (s1 = HW_ADMIN) then
 	begin
 	    writeln(sout, 'PART',#10);
 	    exit;
 	end;
 	
 	
-	if (s2 = '.die') then 
+	if (s2 = HW_CMDCHAR+'die') then 
 	begin
-	    if (s1 = HW_ADMIN) then 
-		quit:=True 
-	    else
+	    if (s1 = HW_ADMIN) then
 	    begin
-		writeln(sout,'CHAT');
-		
-		if (random(2) = 1) then
-		    writeln(sout, 'No way ',s1,'!',#10) else
-		    writeln(sout, 'Try again later ',s1,'!',#10);
+		quit:=True;
+		exit;
 	    end;
+	    
+	    writeln(sout,'CHAT');
+		
+	    if (random(2) = 1) then
+		writeln(sout, 'No way ',s1,'!',#10) else
+		writeln(sout, 'Try again later ',s1,'!',#10);
 	end;
  
  
-	if (s2 = '.fork') and (s1 = HW_ADMIN) then
+	if (s2 = HW_CMDCHAR+'fork') and (s1 = HW_ADMIN) then
 	begin
 	    hwTypes.HW_PASSWORD:='';
 	    hwTypes.HW_NICK+=IntToStr(random(10));
@@ -426,17 +427,17 @@ begin
 	end;
 	
     
-	if (copy(s2, 1,4)= '.say') and (s1 = HW_ADMIN) then 
+	if (copy(s2, 1,4)= HW_CMDCHAR+'say') and (s1 = HW_ADMIN) then 
 	begin
-	    if (s2='.say') or (s2='.say ') then
+	    if (ExtractWord(2, s2, [#32]) = '') then
 		exit;
-	
+		
 	    writeln(sout, 'CHAT');
 	    writeln(sout, trim(copy(s2, 5, length(s2)))+#10);
 	end;
     
     
-	if (s2 = '.users') then 
+	if (s2 = HW_CMDCHAR+'users') then 
 	begin
 	    writeln('USER LIST ->');
 	
@@ -444,9 +445,36 @@ begin
 		if (hw.user[i].nickname <> '') then
 		    write(hw.user[i].nickname + '(',hw.user[i].mode,') ');
 	end;
+	
+    
+	if (ExtractWord(1, s2, [#32]) = HW_CMDCHAR+'set') then 
+	begin
+	    s7:=ExtractWord(2, s2, [#32]);
+	    s8:=ExtractWord(3, s2, [#32]);
+	    
+	    if (s7 = '') and (s8 = '') then 
+		exit;
+
+	    if (s7 <> '') and (s8 = '') then
+	    begin
+		if (s7 = 'cmdchar') then s5:=HW_CMDCHAR;
+		if (s7 = 'notices') then s5:=HW_NOTICES;
+		
+		writeln(sout, 'CHAT',#10,s1+': ',s7,' = ',s5,#10);
+		exit;
+	    end;	
+	    
+	    if (s7 = 'cmdchar') then
+		HW_CMDCHAR:=s8[1];
+		
+	    if (s7 = 'notices') then
+		HW_NOTICES:=s8;
+		
+	    writeln(sout, 'CHAT',#10,s1+': variable ',s7,' set to ',s8,#10);	
+	end;
     
  
-	if (copy(s2, 1, 7) = '.plugin') and (s1 = HW_ADMIN) then
+	if (copy(s2, 1, 7) = HW_CMDCHAR+'plugin') and (s1 = HW_ADMIN) then
 	begin
 	    if (ExtractWord(2, s2, [#32]) = 'list') then
 	    begin
@@ -537,7 +565,11 @@ begin
 	// run plugins by defined command
 	if (hw.pc <> 0) then    
 	    for k:=1 to (hw.pc) do
-		if (copy(s2, 1, pos(#32, s2)-1) = hw.plugin[k].cmd) or (hw.plugin[k].cmd = s2) then
+	    begin
+		s8:=hw.plugin[k].cmd;
+		s8[1]:=HW_CMDCHAR;
+		
+		if (copy(s2, 1, pos(#32, s2)-1) = s8) or (s8 = s2) then
 		begin
 		    try 
 			output:=hw.plugin[k].Parse(s1+':'+s2, hw.user, HW_NICK);
@@ -548,7 +580,8 @@ begin
 			continue;
 		    end;
 	    
-		exit;
+		    exit;
+		end;
 	    end;
  
     end; // .private commands
@@ -596,6 +629,7 @@ begin
     HW_NICK:='INFOBOT';
     HW_ROOM:=HW_NICK+' ROOM';
     HW_CMDCHAR:='.';
+    HW_NOTICES:='true';
     
     SetLength(hw.plugin, HW_MAXPLUGINS);
     SetLength(hw.user, HW_MAXUSERS);
