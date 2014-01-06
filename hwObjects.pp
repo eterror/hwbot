@@ -473,6 +473,14 @@ begin
     	    end;
         end;
 
+        if (copy(l, 1,8) = 'command=') then
+        begin
+            p:=trim(copy(l, pos('=',l)+1, length(l)));
+
+            if (p <> '') and (length(p) = 1) then
+                HW_CMDCHAR:=p[1];
+        end;
+        
         if (copy(l, 1,5) = 'nick=') then
         begin
             p:=trim(copy(l, pos('=',l)+1, length(l)));

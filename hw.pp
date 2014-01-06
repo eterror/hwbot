@@ -291,15 +291,17 @@ begin
 	    
 	
 	    writeln(sOut, 'CHAT');writeln(sout, 'Available public commands:',#10);
-	    writeln(sout, 'CHAT');writeln(sout, ' .help [command]',#10);
-	    writeln(sOut, 'CHAT');writeln(sout, ' .version',#10);
+	    writeln(sout, 'CHAT');writeln(sout, '> '+HW_CMDCHAR+'help [command]',#10);
+	    writeln(sOut, 'CHAT');writeln(sout, '> '+HW_CMDCHAR+'version',#10);
 	    
 	    // plugin:usage
 	    if (hw.pc <> 0) then    
 	    for k:=1 to (hw.pc) do
 	    begin
 		try
-		    writeln(sout, 'CHAT'+#10+hw.plugin[k].cmd+#32+hw.plugin[k].usage+' (Plugin)'+ #10);
+		    s8:=hw.plugin[k].cmd;
+		    s8[1]:=HW_CMDCHAR;
+		    writeln(sout, 'CHAT'+#10+'> '+HW_CMDCHAR+s8+#32+hw.plugin[k].usage+' (Plugin)'+ #10);
 		except
 		    continue;
 		end;
@@ -457,7 +459,7 @@ begin
 		begin
 		    try
 			if (hw.plugin[k].hnd <> 0) then
-			    writeln(sout, 'CHAT'+#10+s1,': ',k,'. ',hw.plugin[k].name,' -> ',hw.plugin[k].author,' (',hw.plugin[k].fname,'):',hw.plugin[k].ver,' (',hw.plugin[k].cmd,')'#10);
+			    writeln(sout, 'CHAT'+#10+s1,': (',k,') ',hw.plugin[k].name,' -> ',hw.plugin[k].author,' (',hw.plugin[k].fname,'):',hw.plugin[k].ver,' (',hw.plugin[k].cmd,')'#10);
 		    except
 			continue;
 		    end;
@@ -592,6 +594,7 @@ begin
     
     HW_NICK:='INFOBOT';
     HW_ROOM:=HW_NICK+' ROOM';
+    HW_CMDCHAR:='.';
     
     SetLength(hw.plugin, HW_MAXPLUGINS);
     SetLength(hw.user, HW_MAXUSERS);

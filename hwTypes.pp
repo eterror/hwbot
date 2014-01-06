@@ -33,6 +33,7 @@ var
     HW_ROOM:    String;
     HW_PASSWORD:String;
     HW_ADMIN   :String;
+    HW_CMDCHAR :Char;
 
 
 type
