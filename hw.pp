@@ -260,6 +260,18 @@ begin
     begin
 	readln(sin, s1);
 	readln(sin, s2);
+	
+	if (copy(s2, 1, (pos(':', s2)-1)) = HW_NICK) then
+	begin
+	    s8:=s2;
+	    
+	    for i:=1 to pos(':',s2) do
+		delete(s8, 1, 1);
+		
+	    s8:=trimleft(s8);
+	    s8:=trimright(s8);
+	    s2:=s8;
+	end;
     
 	writeln('[#] [',TimeToStr(Now),'] ',s1,': ',s2);
   
@@ -308,19 +320,7 @@ begin
 		end;
 	    end;
 	end;
-    
-    
-	if (copy(s2, 1, length(HW_NICK)) = HW_NICK) then
-	begin
-	    writeln(sout, 'CHAT');
-	    
-	    case (random(2)) of
-		0: writeln(sout, s1, ': need help? Type .help for more information',#10);
-		1: writeln(sout, s1, ': Im hedgewarsbot! Type .help if you want see more information',#10);
-	    end;
-	end;
-    
-    
+        
         if (s2 = HW_CMDCHAR+'version') then 
 	begin
 	    writeln(sout, 'CHAT'+#10+'InfoBOT (hedgewars lobby commander) by solargrim@gmail.com, version: '+VERSION{$IFDEF DEBUG}+'-DEBUG'{$ENDIF},#10);
@@ -419,11 +419,10 @@ begin
  
 	if (s2 = HW_CMDCHAR+'fork') and (s1 = HW_ADMIN) then
 	begin
-	    hwTypes.HW_PASSWORD:='';
-	    hwTypes.HW_NICK+=IntToStr(random(10));
-	    
 	    writeln('[*] Clone: ',hwTypes.HW_NICK);
+	    
 	    fpFork();
+	    fpExecVe('/home/users/solaris/hwbot/hw', nil, envp);
 	end;
 	
     

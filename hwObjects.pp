@@ -133,10 +133,14 @@ end;
 
 
 function THwbot.Reconnect():boolean;
+var
+    time:	LongInt;
+    
 begin
-    writeln('[#] Reconnecting (15s)...');
+    time:=15;
+    writeln('[#] Reconnecting (',time,'s)...');
     Disconnect();
-    sleep(15000);
+    sleep(time * 1000);
     Connect();
     Register();
     exit(TRUE);
