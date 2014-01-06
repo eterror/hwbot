@@ -61,8 +61,7 @@ var
     nick:	String;
     param:	String;
     s1, s3,
-    s2, s4, s5:	String;
-    i:		Integer;
+    s2, s4:	String;
     
 begin
     nick:=copy(s, 1, pos(':', s)-1);

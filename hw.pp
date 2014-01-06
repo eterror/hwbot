@@ -6,7 +6,6 @@
 {$UNDEF DEBUG}
 {$MODE OBJFPC}
 
-
 {
 TODO:
  - better support for NOTICE

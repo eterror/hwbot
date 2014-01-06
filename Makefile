@@ -1,19 +1,27 @@
 all: hw plugin
 zip: clean compress
 
+FPCFLAGS = -Sc -vi
+
+ifeq ($(UNAME_P),x86_64)
+    FPCFLAGS +=  -fPIC
+endif
+
+#$(info Compiler flags: $(FPCFLAGS))
+
 hw: hw.pp geoip.pp hwTypes.pp hwObjects.pp
-	fpc geoip.pp
-	fpc hwTypes.pp
-	fpc hwObjects.pp
-	fpc hw.pp
+	fpc $(FPCFLAGS) geoip.pp
+	fpc $(FPCFLAGS) hwTypes.pp
+	fpc $(FPCFLAGS) hwObjects.pp
+	fpc $(FPCFLAGS) hw.pp
 
 plugin: plugins/*.pp
-	fpc plugins/note.pp
-	fpc plugins/memo.pp
-	fpc plugins/seen.pp
-	fpc plugins/counter.pp
-	fpc plugins/uptime.pp
-	fpc plugins/who.pp
+	fpc $(FPCFLAGS) plugins/note.pp
+	fpc $(FPCFLAGS) plugins/memo.pp
+	fpc $(FPCFLAGS) plugins/seen.pp
+	fpc $(FPCFLAGS) plugins/counter.pp
+	fpc $(FPCFLAGS) plugins/uptime.pp
+	fpc $(FPCFLAGS) plugins/who.pp
 
 clean:
 	rm -rf *.o
