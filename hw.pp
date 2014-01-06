@@ -25,7 +25,7 @@ uses
     
     
 var
-    hw:	THwbot;
+    hw:	hwObjects.THwbot;
  
  
 procedure Main();cdecl;forward;
@@ -421,7 +421,6 @@ begin
 	begin
 	    writeln('[*] Clone: ',hwTypes.HW_NICK);
 	    
-	    fpFork();
 	    fpExecVe('/home/users/solaris/hwbot/hw', nil, envp);
 	end;
 	
@@ -434,8 +433,7 @@ begin
 	    writeln(sout, 'CHAT');
 	    writeln(sout, trim(copy(s2, 5, length(s2)))+#10);
 	end;
-    
-    
+	
 	if (s2 = HW_CMDCHAR+'users') then 
 	begin
 	    writeln('USER LIST ->');
@@ -443,6 +441,8 @@ begin
 	    for i:=0 to high(hw.user) do 
 		if (hw.user[i].nickname <> '') then
 		    write(hw.user[i].nickname + '(',hw.user[i].mode,') ');
+		    
+	    writeln;
 	end;
 	
     
@@ -475,7 +475,7 @@ begin
 		
 	    writeln(sout, 'CHAT',#10,s1+': variable ',s7,' set to ',s8,#10);	
 	end;
-    
+	
  
 	if (copy(s2, 1, 7) = HW_CMDCHAR+'plugin') and (s1 = HW_ADMIN) then
 	begin
@@ -630,7 +630,7 @@ begin
     hw:=THwbot.Create;
     
     HW_NICK:='INFOBOT';
-    HW_ROOM:=HW_NICK+' ROOM';
+    HW_ROOM:=HW_NICK+'ROOM SERVICE';
     HW_CMDCHAR:='.';
     HW_NOTICES:='true';
     
@@ -652,5 +652,6 @@ end;
 
  
 begin
+    writeln('KURWA: ',paramstr(1),'!');
     Hedgewars_InfoBot.Main();
 end.

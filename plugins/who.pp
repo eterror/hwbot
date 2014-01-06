@@ -10,7 +10,9 @@ uses
     hwTypes,
     geoip,
     sysutils,
-    strutils;
+    strutils,
+    unix,
+    unixtype;
 
 
 const
@@ -50,7 +52,7 @@ function PluginParse(const s: String; const u: array of TUser; botnick: String):
 	i:  Integer;
     
     begin
-	for i:=0 to HW_MAXUSERS-1 do
+	for i:=0 to HW_MAXUSERS do
     	    if (u[i].nickname = who) then
         	exit(TRUE);
                             
@@ -69,6 +71,8 @@ begin
     if (pos(#32, s) <> 0) then
         param:=copy(s, pos(#32,s)+1, length(s)) else
         param:='';
+        
+    param:=trim(param);
                             
     if (length(param) = 0) then
     begin
@@ -83,18 +87,18 @@ begin
         PluginParse:=nick+': '+param+' is offline';
         exit;
     end;
-
+    
     writeln(bout, 'INFO');
     writeln(bout, param,#10);
     
     readln(bin);
     readln(bin);
-//    readln(bin);
+    readln(bin);
     
     readln(bin, s2);
     readln(bin, s3);
-    readln(bin, s4);readln(bin);
-
+    readln(bin, s4);
+        
     PluginParse:='';
     writeln(bout,'CHAT',#10,nick+': '+param+'('+GetCountry(s2)+'):'+#32+s3+#32+s4+#10);                        
 end;   

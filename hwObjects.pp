@@ -316,10 +316,10 @@ begin
     writeln(sOut, HW_PROTO,#10);
     writeln(sOut, 'NICK');
     writeln(sOut, HW_NICK,#10);
-
+    
     // SKIP FIRST DATA
-    for i:=1 to 12 do
-    begin
+    repeat
+    //begin
         readln(sin, buf);
         {$IFDEF DEBUG}writeln('[DEBUG]',buf,'[!]');{$ENDIF}
 
@@ -354,8 +354,8 @@ begin
 
             Reconnect();
         end;
-    end;
-
+    until (buf = 'LOBBY:JOINED');
+    
     write('[#] Users online: ');
     i:=0;
     repeat
