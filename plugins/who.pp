@@ -1,5 +1,5 @@
 (*
- * This a template plugin for HW InfoBOT
+ * NEED FIX
 *)
 
 {$MODE OBJFPC}
@@ -64,10 +64,6 @@ var
     s2, s4:	String;
     
 begin
-    // BUG
-    PluginParse:='Under construction';
-    exit;
-    
     nick:=copy(s, 1, pos(':', s)-1);
         
     if (pos(#32, s) <> 0) then
