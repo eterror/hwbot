@@ -14,7 +14,7 @@ const
     HW_PORT     = 46631;
     HW_PROTO    = 47;
     HW_CONFIG   = 'hw.conf';
-    VERSION     = '0.3rc5';
+    VERSION     = '0.3rc6';
 
 
 var
@@ -33,6 +33,7 @@ var
     HW_ROOM:    String;
     HW_PASSWORD:String;
     HW_ADMIN   :String;
+    HW_NOTICE  :String;
     HW_CMDCHAR :Char;
 
 

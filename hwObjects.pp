@@ -385,7 +385,7 @@ begin
         writeln(sout);
 
         writeln(sout, 'ADD_TEAM');
-        writeln(sout, 'Type .help for command list');
+        writeln(sout, 'Type '+HW_CMDCHAR+'help for command list');
 
         for i:=1 to 22 do
             writeln(sout, chr(65+random(15)));
@@ -471,6 +471,14 @@ begin
         	//plugin[pc].Free;
         	pc-=1;
     	    end;
+        end;
+        
+        if (copy(l, 1,8) = 'notices=') then
+        begin
+            p:=trim(copy(l, pos('=',l)+1, length(l)));
+
+            if (p <> '') and (length(p) = 1) then
+                HW_NOTICE:=p;
         end;
 
         if (copy(l, 1,8) = 'command=') then

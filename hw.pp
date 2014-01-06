@@ -225,8 +225,10 @@ begin
 	    readln(sin, s8);
 	    readln(sin, s8);
 	
-	    writeln('[#] New room: ',s2);	
-	    writeln(sout, 'CHAT'+#10,'/me -> ',s5,' created new room: ',s2,#10);
+	    writeln('[#] New room: ',s2);
+	    
+	    if (HW_NOTICE = 'true') or (HW_NOTICE = '1') then	
+		writeln(sout, 'CHAT'+#10,'/me -> ',s5,' created new room: ',s2,#10);
 	end;
 	
 	
