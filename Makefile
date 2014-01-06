@@ -1,7 +1,7 @@
 all: hw plugin
 zip: clean compress
 
-FPCFLAGS = -Sc -vi
+FPCFLAGS = -Sc -v0
 
 ifeq ($(UNAME_P),x86_64)
     FPCFLAGS +=  -fPIC
