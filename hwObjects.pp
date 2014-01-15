@@ -165,6 +165,8 @@ begin
         Connect:=FALSE;
         exit;
     end;
+    
+    // fpsetsockopt(s, ...)
 
     Reset(sIn);
     Rewrite(sOut);
@@ -520,6 +522,15 @@ begin
                 HW_PLUGINS:=p;
         end;
 
+
+        if (copy(l, 1, 7) = 'server=') then
+        begin
+            p:=trim(copy(l, pos('=',l)+1, length(l)));
+
+            if (p <> '') then
+                HW_IP:=p;
+        end;
+        
 
         if (copy(l, 1, 5) = 'room=') then
         begin

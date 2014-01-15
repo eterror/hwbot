@@ -4,17 +4,17 @@ unit hwTypes;
 interface
 
 uses
-    sockets;
+    sockets,
+    cthreads, cmem;
 
 
 const
     HW_MAXUSERS	  = 2048;
     HW_MAXPLUGINS = 16;
-    HW_IP       = '140.247.62.101';
     HW_PORT     = 46631;
     HW_PROTO    = 47;
     HW_CONFIG   = 'hw.conf';
-    VERSION     = '0.3rc6';
+    VERSION     = '0.3rc7';
 
 
 var
@@ -35,6 +35,7 @@ var
     HW_ADMIN   :String;
     HW_NOTICES :String;
     HW_CMDCHAR :Char;
+    HW_IP      :String;
 
 
 type

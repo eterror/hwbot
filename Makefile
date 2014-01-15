@@ -22,6 +22,7 @@ plugin: plugins/*.pp
 	fpc $(FPCFLAGS) plugins/counter.pp
 	fpc $(FPCFLAGS) plugins/uptime.pp
 	fpc $(FPCFLAGS) plugins/who.pp
+#	fpc $(FPCFLAGS) plugins/translate.pp
 
 clean:
 	rm -rf *.o

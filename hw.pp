@@ -20,6 +20,9 @@ uses
     dateutils,
     baseunix,
     strutils,
+    cthreads, 
+    cmem,
+    sockets,
     hwTypes in 'hwTypes.pp',
     hwObjects in 'hwObjects.pp';
     
@@ -29,9 +32,8 @@ var
  
  
 procedure Main();cdecl;forward;
-function Parse(input: String) : Boolean; forward;
 
-function Parse(input: String) : boolean;
+function Parse():Boolean;
     
     function StripHTML(S: ansistring): string;
     var
@@ -53,12 +55,15 @@ function Parse(input: String) : boolean;
 
 
 var
+    input:	String;
     s1, s2, s3, s4, s5, s6, s7,s8: String;  
     output: AnsiString;
     i, k: integer;  
     
 begin
 // DEFAULT SERVER COMMANDS
+    input:=hwTypes.line;
+    
     if (input = 'BYE') then
     begin
 	readln(sin, s1);
@@ -593,12 +598,39 @@ begin
 end;
 
 
-function hwLoop():boolean;
+function test(p: pointer):ptrint;
+var
+    t:	TDateTime;
+    j:	LongInt;
+    
+begin
+    t:=Now;
+    
+    while (fprecv(hwTypes.s, @hwtypes.line, 255, MSG_DONTWAIT) < 0) do
+    begin
+	// timeout?
+	if (Now - t > 10) then
+	begin	
+	    writeln('[!] Connection lost (hwLoop)');
+	    hw.Reconnect();
+	end;
+    end;
+    
+    Parse();
+    EndThread();
+end;
+
+
+function hwLoop():Boolean;
 begin
     repeat
 	readln(sIn, hwTypes.line);
-	{$IFDEF DEBUG}if hwTypes.line<>'' then writeln(' -> "',hwTypes.line,'"');{$ENDIF}
-	Parse(hwTypes.line);
+	{$IFDEF DEBUG}if (hwTypes.line<>'') then writeln(' -> "',hwTypes.line,'"');{$ENDIF}
+	{$IFDEF THREAD}
+	BeginThread(@test);
+	{$ELSE}
+	Parse();
+	{$ENDIF}		
     until (quit);
     
     exit(true);
@@ -652,6 +684,5 @@ end;
 
  
 begin
-    writeln('KURWA: ',paramstr(1),'!');
     Hedgewars_InfoBot.Main();
 end.

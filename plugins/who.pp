@@ -99,8 +99,8 @@ begin
     readln(bin, s3);
     readln(bin, s4);
         
-    PluginParse:='';
-    writeln(bout,'CHAT',#10,nick+': '+param+'('+GetCountry(s2)+'):'+#32+s3+#32+s4+#10);                        
+    writeln(bout,'CHAT',#10,nick+': '+param+'('+GetCountry(s2)+'):'+#32+s3+#32+s4+#10);   
+    exit('');                     
 end;   
  
  
